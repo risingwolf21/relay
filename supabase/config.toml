@@ -1,0 +1,106 @@
+# Relay — Supabase local development config
+# Ports are offset by +100 from Supabase defaults (54321→54421) so this
+# instance can run in parallel with another local Supabase project.
+#
+# Default ports used by a standard `supabase start`:
+#   api      54321  →  this project: 54421
+#   db       54322  →  this project: 54422
+#   studio   54323  →  this project: 54423
+#   inbucket 54324  →  this project: 54424
+#   analytics 54327 →  this project: 54427
+#
+# Start with:  supabase start
+# Studio URL:  http://127.0.0.1:54423
+# API URL:     http://127.0.0.1:54421
+
+project_id = "relay"
+
+[api]
+enabled = true
+port = 54421
+schemas = ["public", "graphql_public"]
+extra_search_path = ["public", "extensions"]
+max_rows = 1000
+
+[api.tls]
+enabled = false
+
+[db]
+port = 54422
+shadow_port = 54420
+major_version = 15
+
+[db.pooler]
+enabled = false
+port = 54429
+mode = "transaction"
+default_pool_size = 20
+max_client_conn = 100
+
+[realtime]
+enabled = true
+ip_version = "IPv4"
+
+[studio]
+enabled = true
+port = 54423
+api_url = "http://127.0.0.1"
+openai_api_key = "env(OPENAI_API_KEY)"
+
+[inbucket]
+enabled = true
+port = 54424
+smtp_port = 54425
+pop3_port = 54426
+
+[storage]
+enabled = true
+file_size_limit = "50MiB"
+
+[auth]
+enabled = true
+site_url = "http://127.0.0.1:5173"
+additional_redirect_urls = ["http://127.0.0.1:5173"]
+jwt_expiry = 3600
+enable_refresh_token_rotation = true
+refresh_token_reuse_interval = 10
+enable_signup = true
+enable_manual_linking = false
+minimum_password_length = 6
+password_requirements = ""
+
+[auth.email]
+enable_signup = true
+double_confirm_changes = true
+# Set to false so you can sign in immediately during local dev without
+# having to confirm your email via Inbucket.
+enable_confirmations = false
+secure_password_change = false
+max_frequency = "1s"
+otp_length = 6
+otp_expiry = 3600
+
+[auth.sms]
+enable_signup = false
+enable_confirmations = false
+template = "Your code is {{ .Code }} ."
+max_frequency = "5s"
+
+[auth.mfa]
+max_enrolled_factors = 10
+
+[auth.mfa.totp]
+enroll_enabled = true
+verify_enabled = true
+
+[auth.mfa.phone]
+enroll_enabled = false
+verify_enabled = false
+otp_length = 6
+template = "Your code is {{ .Code }}"
+max_frequency = "5s"
+
+[analytics]
+enabled = true
+port = 54427
+backend = "postgres"
