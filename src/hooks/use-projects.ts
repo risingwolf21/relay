@@ -2,7 +2,6 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '@/lib/supabase'
-import { useAuth } from '@/contexts/auth-context'
 import type { Project } from '@/types/database'
 
 export function useProjects() {
@@ -43,18 +42,17 @@ interface CreateProjectInput {
 
 export function useCreateProject() {
   const queryClient = useQueryClient()
-  const { user } = useAuth()
   const navigate = useNavigate()
 
   return useMutation({
     mutationFn: async (input: CreateProjectInput): Promise<Project> => {
-      const { data, error } = await supabase
-        .from('projects')
-        .insert({ ...input, created_by: user!.id })
-        .select()
-        .single()
+      const { data, error } = await supabase.rpc('create_project', {
+        p_name: input.name,
+        p_description: input.description ?? null,
+        p_slug: input.slug,
+      })
       if (error) throw error
-      return data
+      return data as Project
     },
     onSuccess: (project) => {
       queryClient.invalidateQueries({ queryKey: ['projects'] })

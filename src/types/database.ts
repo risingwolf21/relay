@@ -177,7 +177,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      create_project: {
+        Args: { p_name: string; p_description: string | null; p_slug: string }
+        Returns: ProjectRow
+      }
     }
     Enums: {
       project_role: ProjectRole
