@@ -5,6 +5,8 @@ import { LoginPage } from '@/pages/auth/login-page'
 import { RegisterPage } from '@/pages/auth/register-page'
 import { DashboardPage } from '@/pages/dashboard-page'
 import { ProjectPage } from '@/pages/project-page'
+import { TicketPage } from '@/pages/ticket-page'
+import { SearchPage } from '@/pages/search-page'
 import { NotFoundPage } from '@/pages/not-found-page'
 
 function AuthGuard({ children }: { children: React.ReactNode }) {
@@ -53,6 +55,14 @@ const router = createBrowserRouter([
       {
         path: 'projects/:projectId',
         element: <ProjectPage />,
+      },
+      {
+        path: 'projects/:projectId/tickets/:ticketId',
+        element: <TicketPage />,
+      },
+      {
+        path: 'searches/:searchId',
+        element: <SearchPage />,
       },
     ],
   },

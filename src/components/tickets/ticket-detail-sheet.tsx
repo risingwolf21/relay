@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom'
+import { ExternalLink, Trash2 } from 'lucide-react'
 import { useUpdateTicket, useDeleteTicket } from '@/hooks/use-tickets'
 import type { MemberWithProfile } from '@/hooks/use-members'
 import type { Ticket, ProjectRole } from '@/types/database'
@@ -13,7 +15,6 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
 import { priorityConfig, statusConfig, formatDate } from '@/lib/ticket-utils'
-import { Trash2 } from 'lucide-react'
 
 interface TicketDetailSheetProps {
   ticket: Ticket | null
@@ -54,14 +55,24 @@ export function TicketDetailSheet({
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent side="right" className="w-full max-w-lg overflow-y-auto">
         <SheetHeader className="mb-4">
-          <div className="flex items-center gap-2 flex-wrap">
-            <Badge className={priorityConfig[ticket.priority].className}>
-              <PriorityIcon className="size-3" />
-              {priorityConfig[ticket.priority].label}
-            </Badge>
-            <Badge className={statusConfig[ticket.status].className}>
-              {statusConfig[ticket.status].label}
-            </Badge>
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex items-center gap-2 flex-wrap">
+              <Badge className={priorityConfig[ticket.priority].className}>
+                <PriorityIcon className="size-3" />
+                {priorityConfig[ticket.priority].label}
+              </Badge>
+              <Badge className={statusConfig[ticket.status].className}>
+                {statusConfig[ticket.status].label}
+              </Badge>
+            </div>
+            <Link
+              to={`/projects/${ticket.project_id}/tickets/${ticket.id}`}
+              className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+              title="Open full page"
+            >
+              <ExternalLink className="size-3.5" />
+              Full page
+            </Link>
           </div>
           <SheetTitle className="text-left">{ticket.title}</SheetTitle>
           <SheetDescription className="text-left">
