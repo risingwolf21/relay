@@ -1,9 +1,13 @@
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { ExternalLink, Trash2 } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { useUpdateTicket, useDeleteTicket } from '@/hooks/use-tickets'
 import type { MemberWithProfile } from '@/hooks/use-members'
 import type { Ticket, ProjectRole } from '@/types/database'
 import { TicketForm, type TicketFormValues } from './ticket-form'
+import { TicketComments } from './ticket-comments'
+import { TicketActivityFeed } from './ticket-activity-feed'
 import {
   Sheet,
   SheetContent,
@@ -14,7 +18,8 @@ import {
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
-import { priorityConfig, statusConfig, formatDate } from '@/lib/ticket-utils'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { priorityConfig, statusConfig, formatDate, getInitials } from '@/lib/ticket-utils'
 
 interface TicketDetailSheetProps {
   ticket: Ticket | null
@@ -31,8 +36,10 @@ export function TicketDetailSheet({
   members = [],
   userRole,
 }: TicketDetailSheetProps) {
+  const { t } = useTranslation()
   const updateTicket = useUpdateTicket()
   const deleteTicket = useDeleteTicket()
+  const [editing, setEditing] = useState(false)
 
   if (!ticket) return null
 
@@ -41,7 +48,7 @@ export function TicketDetailSheet({
 
   async function handleSubmit(values: TicketFormValues) {
     await updateTicket.mutateAsync({ id: ticket!.id, project_id: ticket!.project_id, ...values })
-    onOpenChange(false)
+    setEditing(false)
   }
 
   async function handleDelete() {
@@ -49,79 +56,131 @@ export function TicketDetailSheet({
     onOpenChange(false)
   }
 
+  function handleOpenChange(next: boolean) {
+    if (!next) setEditing(false)
+    onOpenChange(next)
+  }
+
   const PriorityIcon = priorityConfig[ticket.priority].icon
 
   return (
-    <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent side="right" className="w-full max-w-lg overflow-y-auto">
-        <SheetHeader className="mb-4">
+    <Sheet open={open} onOpenChange={handleOpenChange}>
+      <SheetContent side="right" className="flex w-full max-w-xl flex-col overflow-y-auto">
+        <SheetHeader className="mb-4 shrink-0">
           <div className="flex items-center justify-between gap-2">
             <div className="flex items-center gap-2 flex-wrap">
               <Badge className={priorityConfig[ticket.priority].className}>
                 <PriorityIcon className="size-3" />
-                {priorityConfig[ticket.priority].label}
+                {t(`priority.${ticket.priority}`)}
               </Badge>
               <Badge className={statusConfig[ticket.status].className}>
-                {statusConfig[ticket.status].label}
+                {t(`status.${ticket.status}`)}
               </Badge>
             </div>
-            <Link
-              to={`/projects/${ticket.project_id}/tickets/${ticket.id}`}
-              className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
-              title="Open full page"
-            >
-              <ExternalLink className="size-3.5" />
-              Full page
-            </Link>
+            <div className="flex items-center gap-1">
+              {canEdit && !editing && (
+                <Button size="sm" variant="outline" onClick={() => setEditing(true)}>
+                  {t('common.edit')}
+                </Button>
+              )}
+              <Link
+                to={`/projects/${ticket.project_id}/tickets/${ticket.id}`}
+                className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+                title={t('nav.openFullPage')}
+              >
+                <ExternalLink className="size-3.5" />
+                {t('nav.fullPage')}
+              </Link>
+            </div>
           </div>
           <SheetTitle className="text-left">{ticket.title}</SheetTitle>
           <SheetDescription className="text-left">
-            Created {formatDate(ticket.created_at)}
+            {t('tickets.created', { date: formatDate(ticket.created_at) })}
           </SheetDescription>
         </SheetHeader>
 
-        <Separator className="my-4" />
+        <Separator className="shrink-0" />
 
-        {canEdit ? (
-          <TicketForm
-            defaultValues={{
-              title: ticket.title,
-              description: ticket.description ?? '',
-              status: ticket.status,
-              priority: ticket.priority,
-              assignee_id: ticket.assignee_id,
-            }}
-            members={members}
-            onSubmit={handleSubmit}
-            onCancel={() => onOpenChange(false)}
-            isSubmitting={updateTicket.isPending}
-            submitLabel="Save changes"
-          />
-        ) : (
-          <div className="grid gap-4 text-sm">
-            {ticket.description && (
-              <div>
-                <p className="mb-1 text-xs font-medium text-muted-foreground uppercase tracking-wider">Description</p>
-                <p className="whitespace-pre-wrap">{ticket.description}</p>
+        <div className="flex-1 overflow-y-auto">
+          {/* Edit form or read-only */}
+          <div className="py-4">
+            {editing && canEdit ? (
+              <TicketForm
+                defaultValues={{
+                  title: ticket.title,
+                  description: ticket.description ?? '',
+                  status: ticket.status,
+                  priority: ticket.priority,
+                  assignee_id: ticket.assignee_id,
+                }}
+                members={members}
+                onSubmit={handleSubmit}
+                onCancel={() => setEditing(false)}
+                isSubmitting={updateTicket.isPending}
+                submitLabel={t('tickets.saveChanges')}
+              />
+            ) : (
+              <div className="grid gap-4 text-sm">
+                {ticket.assignee && (
+                  <div>
+                    <p className="mb-1 text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                      {t('tickets.assignee')}
+                    </p>
+                    <div className="flex items-center gap-2">
+                      <Avatar className="size-6">
+                        <AvatarImage src={ticket.assignee.avatar_url ?? undefined} />
+                        <AvatarFallback className="text-[10px]">
+                          {getInitials(ticket.assignee.full_name, ticket.assignee.email ?? '')}
+                        </AvatarFallback>
+                      </Avatar>
+                      <span>{ticket.assignee.full_name || ticket.assignee.email}</span>
+                    </div>
+                  </div>
+                )}
+                {ticket.description && (
+                  <div>
+                    <p className="mb-1 text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                      {t('tickets.description')}
+                    </p>
+                    <p className="whitespace-pre-wrap">{ticket.description}</p>
+                  </div>
+                )}
               </div>
             )}
           </div>
-        )}
 
-        {canDelete && (
-          <>
-            <Separator className="my-4" />
-            <Button
-              variant="destructive"
-              size="sm"
-              onClick={handleDelete}
-              disabled={deleteTicket.isPending}
-            >
-              <Trash2 className="size-4" />
-              Delete ticket
-            </Button>
-          </>
-        )}
+          {canDelete && !editing && (
+            <>
+              <Separator />
+              <div className="py-4">
+                <Button
+                  variant="destructive"
+                  size="sm"
+                  onClick={handleDelete}
+                  disabled={deleteTicket.isPending}
+                >
+                  <Trash2 className="size-4" />
+                  {t('tickets.deleteTicket')}
+                </Button>
+              </div>
+            </>
+          )}
+
+          <Separator />
+
+          {/* Comments */}
+          <div className="py-4">
+            <TicketComments ticketId={ticket.id} />
+          </div>
+
+          <Separator />
+
+          {/* Activity */}
+          <div className="py-4">
+            <h3 className="mb-4 text-sm font-medium">{t('activity.title')}</h3>
+            <TicketActivityFeed ticketId={ticket.id} />
+          </div>
+        </div>
       </SheetContent>
     </Sheet>
   )

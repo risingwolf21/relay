@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Plus } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { useProjects } from '@/hooks/use-projects'
 import { useAuth } from '@/contexts/auth-context'
 import { ProjectCard } from '@/components/projects/project-card'
@@ -9,6 +10,7 @@ import { Button } from '@/components/ui/button'
 export function DashboardPage() {
   const { data: projects = [], isLoading } = useProjects()
   const { profile } = useAuth()
+  const { t } = useTranslation()
   const [createOpen, setCreateOpen] = useState(false)
 
   return (
@@ -16,13 +18,15 @@ export function DashboardPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="font-heading text-xl font-semibold">
-            {profile?.full_name ? `Welcome, ${profile.full_name.split(' ')[0]}` : 'Dashboard'}
+            {profile?.full_name
+              ? `${t('nav.home')}, ${profile.full_name.split(' ')[0]}`
+              : t('nav.dashboard')}
           </h1>
-          <p className="text-sm text-muted-foreground">Manage your projects and track progress</p>
+          <p className="text-sm text-muted-foreground">{t('projects.dashboardDescription')}</p>
         </div>
         <Button onClick={() => setCreateOpen(true)}>
           <Plus className="size-4" />
-          New project
+          {t('projects.new')}
         </Button>
       </div>
 
@@ -35,14 +39,14 @@ export function DashboardPage() {
       ) : projects.length === 0 ? (
         <div className="flex flex-col items-center justify-center rounded-xl border py-20 gap-4">
           <div className="text-center">
-            <h2 className="font-medium">No projects yet</h2>
+            <h2 className="font-medium">{t('projects.noProjectsEmpty')}</h2>
             <p className="mt-1 text-sm text-muted-foreground">
-              Create a project to start tracking work
+              {t('projects.noProjectsHint')}
             </p>
           </div>
           <Button onClick={() => setCreateOpen(true)}>
             <Plus className="size-4" />
-            Create your first project
+            {t('projects.createFirst')}
           </Button>
         </div>
       ) : (

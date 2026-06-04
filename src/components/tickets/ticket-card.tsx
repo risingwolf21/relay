@@ -1,6 +1,7 @@
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { GripVertical } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import type { Ticket } from '@/types/database'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
@@ -14,6 +15,7 @@ interface TicketCardProps {
 }
 
 export function TicketCard({ ticket, onClick, isDragOverlay = false }: TicketCardProps) {
+  const { t } = useTranslation()
   const {
     attributes,
     listeners,
@@ -60,10 +62,10 @@ export function TicketCard({ ticket, onClick, isDragOverlay = false }: TicketCar
                 className={`inline-flex items-center gap-1 rounded-md border px-1.5 py-0.5 text-xs ${priorityConfig[ticket.priority].className}`}
               >
                 <PriorityIcon className="size-3" />
-                {priorityConfig[ticket.priority].label}
+                {t(`priority.${ticket.priority}`)}
               </span>
             </TooltipTrigger>
-            <TooltipContent>Priority: {priorityConfig[ticket.priority].label}</TooltipContent>
+            <TooltipContent>{t('tickets.priority_label', { priority: t(`priority.${ticket.priority}`) })}</TooltipContent>
           </Tooltip>
 
           {ticket.assignee && (

@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useDroppable } from '@dnd-kit/core'
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import { Plus } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import type { Ticket, TicketStatus, ProjectRole } from '@/types/database'
 import type { MemberWithProfile } from '@/hooks/use-members'
 import { Button } from '@/components/ui/button'
@@ -21,6 +22,7 @@ interface KanbanColumnProps {
 
 export function KanbanColumn({ status, tickets, projectId, members, userRole }: KanbanColumnProps) {
   const { setNodeRef, isOver } = useDroppable({ id: status })
+  const { t } = useTranslation()
   const [createOpen, setCreateOpen] = useState(false)
   const [selectedTicket, setSelectedTicket] = useState<Ticket | null>(null)
 
@@ -33,10 +35,8 @@ export function KanbanColumn({ status, tickets, projectId, members, userRole }: 
       {/* Column header */}
       <div className="flex items-center justify-between px-1">
         <div className="flex items-center gap-2">
-          <span
-            className={cn('size-2 rounded-full', config.dotClassName)}
-          />
-          <span className="text-sm font-medium">{config.label}</span>
+          <span className={cn('size-2 rounded-full', config.dotClassName)} />
+          <span className="text-sm font-medium">{t(`status.${status}`)}</span>
           <span className="rounded-md bg-muted px-1.5 py-0.5 text-xs text-muted-foreground">
             {tickets.length}
           </span>
@@ -46,7 +46,7 @@ export function KanbanColumn({ status, tickets, projectId, members, userRole }: 
             variant="ghost"
             size="icon-xs"
             onClick={() => setCreateOpen(true)}
-            title={`Add ticket to ${config.label}`}
+            title={t('tickets.addTicketTo', { status: t(`status.${status}`) })}
           >
             <Plus className="size-3.5" />
           </Button>
@@ -71,7 +71,7 @@ export function KanbanColumn({ status, tickets, projectId, members, userRole }: 
           ))}
           {tickets.length === 0 && (
             <div className="flex flex-1 items-center justify-center py-8">
-              <p className="text-xs text-muted-foreground">Drop tickets here</p>
+              <p className="text-xs text-muted-foreground">{t('tickets.dropTicketsHere')}</p>
             </div>
           )}
         </div>

@@ -1,9 +1,10 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useProjects } from '@/hooks/use-projects'
 import { useCreateSavedSearch, useUpdateSavedSearch } from '@/hooks/use-saved-searches'
 import { useAuth } from '@/contexts/auth-context'
 import type { SavedSearch, SearchFilters, TicketStatus, TicketPriority } from '@/types/database'
-import { statusConfig, priorityConfig, TICKET_STATUSES } from '@/lib/ticket-utils'
+import { TICKET_STATUSES } from '@/lib/ticket-utils'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -27,6 +28,7 @@ interface SavedSearchDialogProps {
 
 export function SavedSearchDialog({ open, onOpenChange, existing }: SavedSearchDialogProps) {
   const { user } = useAuth()
+  const { t } = useTranslation()
   const { data: projects = [] } = useProjects()
   const createSearch = useCreateSavedSearch()
   const updateSearch = useUpdateSavedSearch()
@@ -60,34 +62,31 @@ export function SavedSearchDialog({ open, onOpenChange, existing }: SavedSearchD
     <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent className="max-w-md">
         <DialogHeader>
-          <DialogTitle>{existing ? 'Edit search' : 'New saved search'}</DialogTitle>
+          <DialogTitle>{existing ? t('search.editSaved') : t('search.newSaved')}</DialogTitle>
         </DialogHeader>
 
         <div className="grid gap-4">
-          {/* Name */}
           <div className="grid gap-1.5">
-            <Label>Name</Label>
+            <Label>{t('search.name')}</Label>
             <Input
-              placeholder="e.g. My open tickets"
+              placeholder={t('search.namePlaceholder')}
               value={name}
               onChange={(e) => setName(e.target.value)}
             />
           </div>
 
-          {/* Text search */}
           <div className="grid gap-1.5">
-            <Label>Title contains</Label>
+            <Label>{t('search.titleContains')}</Label>
             <Input
-              placeholder="Search text…"
+              placeholder={t('search.searchTextPlaceholder')}
               value={filters.text}
               onChange={(e) => setFilters((f) => ({ ...f, text: e.target.value }))}
             />
           </div>
 
-          {/* Projects */}
           {projects.length > 0 && (
             <div className="grid gap-1.5">
-              <Label>Projects</Label>
+              <Label>{t('search.projectsFilter')}</Label>
               <div className="flex flex-wrap gap-2">
                 {projects.map((p) => (
                   <button
@@ -107,14 +106,13 @@ export function SavedSearchDialog({ open, onOpenChange, existing }: SavedSearchD
                 ))}
               </div>
               {filters.project_ids.length === 0 && (
-                <p className="text-xs text-muted-foreground">All projects</p>
+                <p className="text-xs text-muted-foreground">{t('search.allProjects')}</p>
               )}
             </div>
           )}
 
-          {/* Statuses */}
           <div className="grid gap-1.5">
-            <Label>Status</Label>
+            <Label>{t('search.statusFilter')}</Label>
             <div className="flex flex-wrap gap-2">
               {TICKET_STATUSES.map((s) => (
                 <button
@@ -129,18 +127,17 @@ export function SavedSearchDialog({ open, onOpenChange, existing }: SavedSearchD
                       : 'border-border hover:bg-accent'
                   }`}
                 >
-                  {statusConfig[s].label}
+                  {t(`status.${s}`)}
                 </button>
               ))}
             </div>
             {filters.statuses.length === 0 && (
-              <p className="text-xs text-muted-foreground">All statuses</p>
+              <p className="text-xs text-muted-foreground">{t('search.allStatuses')}</p>
             )}
           </div>
 
-          {/* Priorities */}
           <div className="grid gap-1.5">
-            <Label>Priority</Label>
+            <Label>{t('search.priorityFilter')}</Label>
             <div className="flex flex-wrap gap-2">
               {PRIORITIES.map((p) => (
                 <button
@@ -158,16 +155,15 @@ export function SavedSearchDialog({ open, onOpenChange, existing }: SavedSearchD
                       : 'border-border hover:bg-accent'
                   }`}
                 >
-                  {priorityConfig[p].label}
+                  {t(`priority.${p}`)}
                 </button>
               ))}
             </div>
             {filters.priorities.length === 0 && (
-              <p className="text-xs text-muted-foreground">All priorities</p>
+              <p className="text-xs text-muted-foreground">{t('search.allPriorities')}</p>
             )}
           </div>
 
-          {/* Assigned to me */}
           <label className="flex cursor-pointer items-center gap-2">
             <input
               type="checkbox"
@@ -175,16 +171,16 @@ export function SavedSearchDialog({ open, onOpenChange, existing }: SavedSearchD
               checked={filters.assignee_me}
               onChange={(e) => setFilters((f) => ({ ...f, assignee_me: e.target.checked }))}
             />
-            <span className="text-sm">Only assigned to me ({user?.email})</span>
+            <span className="text-sm">{t('search.assignedToMe', { email: user?.email })}</span>
           </label>
         </div>
 
         <DialogFooter>
           <Button variant="outline" onClick={handleClose}>
-            Cancel
+            {t('common.cancel')}
           </Button>
           <Button onClick={handleSave} disabled={!name.trim() || isPending}>
-            {isPending ? 'Saving…' : existing ? 'Update search' : 'Save search'}
+            {isPending ? t('common.saving') : existing ? t('search.updateSearch') : t('search.saveSearch')}
           </Button>
         </DialogFooter>
       </DialogContent>

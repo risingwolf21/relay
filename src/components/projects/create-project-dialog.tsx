@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
+import { useTranslation } from 'react-i18next'
 import { supabase } from '@/lib/supabase'
 import { useCreateProject } from '@/hooks/use-projects'
 import { toSlug } from '@/lib/ticket-utils'
@@ -30,6 +31,7 @@ interface CreateProjectDialogProps {
 
 export function CreateProjectDialog({ open, onOpenChange }: CreateProjectDialogProps) {
   const createProject = useCreateProject()
+  const { t } = useTranslation()
   const [slugTouched, setSlugTouched] = useState(false)
 
   const form = useForm<CreateProjectValues>({
@@ -46,10 +48,9 @@ export function CreateProjectDialog({ open, onOpenChange }: CreateProjectDialogP
   }, [nameValue, slugTouched, form])
 
   async function onSubmit(values: CreateProjectValues) {
-    // Check slug uniqueness
     const { data } = await supabase.from('projects').select('id').eq('slug', values.slug).maybeSingle()
     if (data) {
-      form.setError('slug', { message: 'This slug is already taken' })
+      form.setError('slug', { message: t('projects.slugTaken') ?? 'This slug is already taken' })
       return
     }
     await createProject.mutateAsync(values)
@@ -66,8 +67,8 @@ export function CreateProjectDialog({ open, onOpenChange }: CreateProjectDialogP
     <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>New project</DialogTitle>
-          <DialogDescription>Create a project to start tracking work.</DialogDescription>
+          <DialogTitle>{t('projects.createTitle')}</DialogTitle>
+          <DialogDescription>{t('projects.createDescription')}</DialogDescription>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4">
@@ -76,9 +77,9 @@ export function CreateProjectDialog({ open, onOpenChange }: CreateProjectDialogP
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Name</FormLabel>
+                  <FormLabel>{t('projects.name')}</FormLabel>
                   <FormControl>
-                    <Input placeholder="My project" {...field} />
+                    <Input placeholder={t('projects.namePlaceholder')} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -89,9 +90,9 @@ export function CreateProjectDialog({ open, onOpenChange }: CreateProjectDialogP
               name="description"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Description</FormLabel>
+                  <FormLabel>{t('projects.description')}</FormLabel>
                   <FormControl>
-                    <Textarea placeholder="What is this project about?" className="resize-none" rows={2} {...field} />
+                    <Textarea placeholder={t('projects.descriptionPlaceholder')} className="resize-none" rows={2} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -102,7 +103,7 @@ export function CreateProjectDialog({ open, onOpenChange }: CreateProjectDialogP
               name="slug"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Slug</FormLabel>
+                  <FormLabel>{t('projects.slug')}</FormLabel>
                   <FormControl>
                     <Input
                       placeholder="my-project"
@@ -113,17 +114,17 @@ export function CreateProjectDialog({ open, onOpenChange }: CreateProjectDialogP
                       }}
                     />
                   </FormControl>
-                  <FormDescription>Used in URLs. Must be unique.</FormDescription>
+                  <FormDescription>{t('projects.slugHint')}</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
             />
             <DialogFooter>
               <Button type="button" variant="outline" onClick={handleClose}>
-                Cancel
+                {t('common.cancel')}
               </Button>
               <Button type="submit" disabled={createProject.isPending}>
-                {createProject.isPending ? 'Creating…' : 'Create project'}
+                {createProject.isPending ? t('projects.creating') : t('projects.createTitle')}
               </Button>
             </DialogFooter>
           </form>

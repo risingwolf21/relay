@@ -4,6 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { useNavigate, Link } from 'react-router-dom'
 import { toast } from 'sonner'
+import { useTranslation } from 'react-i18next'
 
 import { useAuth } from '@/contexts/auth-context'
 import { Button } from '@/components/ui/button'
@@ -21,6 +22,7 @@ type RegisterValues = z.infer<typeof registerSchema>
 export function RegisterForm() {
   const { signUp } = useAuth()
   const navigate = useNavigate()
+  const { t } = useTranslation()
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   const form = useForm<RegisterValues>({
@@ -35,7 +37,7 @@ export function RegisterForm() {
     if (error) {
       toast.error(error.message)
     } else {
-      toast.success('Account created! Check your email to confirm.')
+      toast.success(t('auth.accountCreated'))
       navigate('/dashboard')
     }
   }
@@ -48,7 +50,7 @@ export function RegisterForm() {
           name="full_name"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Full name</FormLabel>
+              <FormLabel>{t('auth.fullName')}</FormLabel>
               <FormControl>
                 <Input placeholder="Jane Smith" autoComplete="name" {...field} />
               </FormControl>
@@ -61,7 +63,7 @@ export function RegisterForm() {
           name="email"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Email</FormLabel>
+              <FormLabel>{t('auth.email')}</FormLabel>
               <FormControl>
                 <Input placeholder="you@example.com" type="email" autoComplete="email" {...field} />
               </FormControl>
@@ -74,7 +76,7 @@ export function RegisterForm() {
           name="password"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Password</FormLabel>
+              <FormLabel>{t('auth.password')}</FormLabel>
               <FormControl>
                 <Input placeholder="Min. 8 characters" type="password" autoComplete="new-password" {...field} />
               </FormControl>
@@ -83,12 +85,12 @@ export function RegisterForm() {
           )}
         />
         <Button type="submit" className="w-full" disabled={isSubmitting}>
-          {isSubmitting ? 'Creating account…' : 'Create account'}
+          {isSubmitting ? t('auth.creatingAccount') : t('auth.createAccount')}
         </Button>
         <p className="text-center text-sm text-muted-foreground">
-          Already have an account?{' '}
+          {t('auth.haveAccount')}{' '}
           <Link to="/login" className="text-primary underline-offset-4 hover:underline">
-            Sign in
+            {t('auth.signIn')}
           </Link>
         </p>
       </form>

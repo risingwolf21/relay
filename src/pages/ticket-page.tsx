@@ -1,7 +1,8 @@
 import { useState } from 'react'
-import { useParams, Link } from 'react-router-dom'
+import { useParams, Link, useNavigate } from 'react-router-dom'
 import { ChevronLeft, Trash2 } from 'lucide-react'
 import { useQuery } from '@tanstack/react-query'
+import { useTranslation } from 'react-i18next'
 import { supabase } from '@/lib/supabase'
 import { useUpdateTicket, useDeleteTicket } from '@/hooks/use-tickets'
 import { useProjectMembers } from '@/hooks/use-members'
@@ -14,7 +15,6 @@ import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 import { priorityConfig, statusConfig, formatDate } from '@/lib/ticket-utils'
 import type { Ticket, ProjectRole } from '@/types/database'
-import { useNavigate } from 'react-router-dom'
 
 function useTicket(ticketId: string) {
   return useQuery({
@@ -35,6 +35,7 @@ function useTicket(ticketId: string) {
 export function TicketPage() {
   const { projectId, ticketId } = useParams<{ projectId: string; ticketId: string }>()
   const { user } = useAuth()
+  const { t } = useTranslation()
   const navigate = useNavigate()
 
   const { data: ticket, isLoading: ticketLoading } = useTicket(ticketId!)
@@ -70,9 +71,9 @@ export function TicketPage() {
   if (!ticket) {
     return (
       <div className="flex flex-col items-center justify-center gap-2 p-12">
-        <p className="text-muted-foreground">Ticket not found</p>
+        <p className="text-muted-foreground">{t('tickets.notFound')}</p>
         <Link to={`/projects/${projectId}`} className="text-sm underline">
-          Back to project
+          {t('tickets.backToProject')}
         </Link>
       </div>
     )
@@ -88,7 +89,7 @@ export function TicketPage() {
         className="inline-flex w-fit items-center gap-1 text-xs text-muted-foreground transition-colors hover:text-foreground"
       >
         <ChevronLeft className="size-3.5" />
-        Back to project
+        {t('tickets.backToProject')}
       </Link>
 
       {/* Header */}
@@ -97,16 +98,16 @@ export function TicketPage() {
           <div className="flex flex-wrap gap-2">
             <Badge className={priorityConfig[ticket.priority].className}>
               <PriorityIcon className="size-3" />
-              {priorityConfig[ticket.priority].label}
+              {t(`priority.${ticket.priority}`)}
             </Badge>
             <Badge className={statusConfig[ticket.status].className}>
-              {statusConfig[ticket.status].label}
+              {t(`status.${ticket.status}`)}
             </Badge>
           </div>
           <div className="flex shrink-0 gap-2">
             {canEdit && !editing && (
               <Button size="sm" variant="outline" onClick={() => setEditing(true)}>
-                Edit
+                {t('common.edit')}
               </Button>
             )}
             {canDelete && (
@@ -117,7 +118,7 @@ export function TicketPage() {
                 disabled={deleteTicket.isPending}
               >
                 <Trash2 className="size-4" />
-                Delete
+                {t('common.delete')}
               </Button>
             )}
           </div>
@@ -126,8 +127,8 @@ export function TicketPage() {
         <div>
           <h1 className="font-heading text-2xl font-semibold">{ticket.title}</h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            Created {formatDate(ticket.created_at)}
-            {ticket.assignee && ` · Assigned to ${ticket.assignee.full_name || ticket.assignee.email}`}
+            {t('tickets.created', { date: formatDate(ticket.created_at) })}
+            {ticket.assignee && t('tickets.assignedTo', { name: ticket.assignee.full_name || ticket.assignee.email })}
           </p>
         </div>
       </div>
@@ -148,13 +149,13 @@ export function TicketPage() {
           onSubmit={handleSubmit}
           onCancel={() => setEditing(false)}
           isSubmitting={updateTicket.isPending}
-          submitLabel="Save changes"
+          submitLabel={t('tickets.saveChanges')}
         />
       ) : (
         ticket.description && (
           <div>
             <p className="mb-2 text-xs font-medium uppercase tracking-wider text-muted-foreground">
-              Description
+              {t('tickets.description')}
             </p>
             <p className="whitespace-pre-wrap text-sm">{ticket.description}</p>
           </div>
@@ -170,7 +171,7 @@ export function TicketPage() {
 
       {/* Activity */}
       <div>
-        <h3 className="mb-4 text-sm font-medium">Activity</h3>
+        <h3 className="mb-4 text-sm font-medium">{t('activity.title')}</h3>
         <TicketActivityFeed ticketId={ticket.id} />
       </div>
     </div>
