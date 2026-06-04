@@ -3,23 +3,28 @@ import { toast } from 'sonner'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/contexts/auth-context'
-import type { Project, ProjectRow, ProjectRole } from '@/types/database'
+import type { Project, ProjectRow } from '@/types/database'
 
 export function useEditableProjects() {
   const { user } = useAuth()
   return useQuery({
     queryKey: ['editable-projects', user?.id],
-    queryFn: async (): Promise<(ProjectRow & { role: ProjectRole })[]> => {
-      const { data, error } = await supabase
+    queryFn: async (): Promise<ProjectRow[]> => {
+      const { data: memberships, error: memberError } = await supabase
         .from('project_members')
-        .select('role, project:projects(*)')
+        .select('project_id')
         .eq('user_id', user!.id)
         .in('role', ['admin', 'editor'])
-      if (error) throw error
-      return (data ?? []).map((r) => ({
-        ...(r.project as unknown as ProjectRow),
-        role: r.role as ProjectRole,
-      }))
+      if (memberError) throw memberError
+      if (!memberships?.length) return []
+
+      const { data: projects, error: projectError } = await supabase
+        .from('projects')
+        .select('*')
+        .in('id', memberships.map((m) => m.project_id))
+        .order('name')
+      if (projectError) throw projectError
+      return projects ?? []
     },
     enabled: !!user,
   })

@@ -3,6 +3,17 @@ export type TicketStatus = 'backlog' | 'todo' | 'in_progress' | 'in_review' | 'd
 export type TicketPriority = 'low' | 'medium' | 'high' | 'urgent'
 
 // ─────────────────────────────────────────────────────────────
+// Search filters (stored as JSONB in saved_searches.filters)
+// ─────────────────────────────────────────────────────────────
+export type SearchFilters = {
+  project_ids: string[]
+  statuses: TicketStatus[]
+  priorities: TicketPriority[]
+  assignee_me: boolean
+  text: string
+}
+
+// ─────────────────────────────────────────────────────────────
 // Raw DB row types (used inside the Database type — no joins)
 // ─────────────────────────────────────────────────────────────
 
@@ -31,6 +42,34 @@ export type ProjectMemberRow = {
   role: ProjectRole
   invited_by: string | null
   joined_at: string
+}
+
+export type TicketCommentRow = {
+  id: string
+  ticket_id: string
+  user_id: string
+  content: string
+  created_at: string
+  updated_at: string
+}
+
+export type TicketActivityRow = {
+  id: string
+  ticket_id: string
+  user_id: string | null
+  type: string
+  old_value: string | null
+  new_value: string | null
+  created_at: string
+}
+
+export type SavedSearchRow = {
+  id: string
+  user_id: string
+  name: string
+  filters: SearchFilters
+  created_at: string
+  updated_at: string
 }
 
 export type TicketRow = {
@@ -63,6 +102,10 @@ export type Ticket = TicketRow & {
   assignee?: Profile | null
   creator?: Profile | null
 }
+
+export type TicketComment = TicketCommentRow & { author?: Profile }
+export type TicketActivity = TicketActivityRow & { actor?: Profile | null }
+export type SavedSearch = SavedSearchRow
 
 // ─────────────────────────────────────────────────────────────
 // Supabase Database type — matches the shape expected by createClient<Database>
@@ -171,6 +214,46 @@ export type Database = {
           referencedRelation: string
           referencedColumns: string[]
         }[]
+      }
+      ticket_comments: {
+        Row: TicketCommentRow
+        Insert: {
+          id?: string
+          ticket_id: string
+          user_id: string
+          content: string
+          created_at?: string
+          updated_at?: string
+        }
+        Update: { content?: string; updated_at?: string }
+        Relationships: { foreignKeyName: string; columns: string[]; isOneToOne?: boolean; referencedRelation: string; referencedColumns: string[] }[]
+      }
+      ticket_activity: {
+        Row: TicketActivityRow
+        Insert: {
+          id?: string
+          ticket_id: string
+          user_id?: string | null
+          type: string
+          old_value?: string | null
+          new_value?: string | null
+          created_at?: string
+        }
+        Update: Record<string, never>
+        Relationships: { foreignKeyName: string; columns: string[]; isOneToOne?: boolean; referencedRelation: string; referencedColumns: string[] }[]
+      }
+      saved_searches: {
+        Row: SavedSearchRow
+        Insert: {
+          id?: string
+          user_id: string
+          name: string
+          filters?: SearchFilters
+          created_at?: string
+          updated_at?: string
+        }
+        Update: { name?: string; filters?: SearchFilters; updated_at?: string }
+        Relationships: { foreignKeyName: string; columns: string[]; isOneToOne?: boolean; referencedRelation: string; referencedColumns: string[] }[]
       }
     }
     Views: {
