@@ -1,6 +1,7 @@
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
+import { useTranslation } from 'react-i18next'
 import type { TicketPriority } from '@/types/database'
 import type { MemberWithProfile } from '@/hooks/use-members'
 import { Button } from '@/components/ui/button'
@@ -8,7 +9,7 @@ import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
-import { statusConfig, priorityConfig, TICKET_STATUSES } from '@/lib/ticket-utils'
+import { TICKET_STATUSES } from '@/lib/ticket-utils'
 
 const PRIORITIES: TicketPriority[] = ['urgent', 'high', 'medium', 'low']
 
@@ -38,9 +39,10 @@ export function TicketForm({
   onSubmit,
   onCancel,
   isSubmitting,
-  submitLabel = 'Save',
+  submitLabel,
   submitDisabled,
 }: TicketFormProps) {
+  const { t } = useTranslation()
   const form = useForm<TicketFormValues>({
     resolver: zodResolver(ticketSchema),
     defaultValues: {
@@ -53,6 +55,8 @@ export function TicketForm({
     },
   })
 
+  const label = submitLabel ?? t('common.save')
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4">
@@ -61,9 +65,9 @@ export function TicketForm({
           name="title"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Title</FormLabel>
+              <FormLabel>{t('tickets.title')}</FormLabel>
               <FormControl>
-                <Input placeholder="What needs to be done?" {...field} />
+                <Input placeholder={t('tickets.titlePlaceholder')} {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -74,10 +78,10 @@ export function TicketForm({
           name="description"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Description</FormLabel>
+              <FormLabel>{t('tickets.description')}</FormLabel>
               <FormControl>
                 <Textarea
-                  placeholder="Add more details…"
+                  placeholder={t('tickets.descriptionPlaceholder')}
                   className="min-h-[100px] resize-none"
                   {...field}
                 />
@@ -92,7 +96,7 @@ export function TicketForm({
             name="status"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Status</FormLabel>
+                <FormLabel>{t('tickets.status')}</FormLabel>
                 <Select value={field.value} onValueChange={field.onChange}>
                   <FormControl>
                     <SelectTrigger>
@@ -102,7 +106,7 @@ export function TicketForm({
                   <SelectContent>
                     {TICKET_STATUSES.map((s) => (
                       <SelectItem key={s} value={s}>
-                        {statusConfig[s].label}
+                        {t(`status.${s}`)}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -116,7 +120,7 @@ export function TicketForm({
             name="priority"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Priority</FormLabel>
+                <FormLabel>{t('tickets.priority')}</FormLabel>
                 <Select value={field.value} onValueChange={field.onChange}>
                   <FormControl>
                     <SelectTrigger>
@@ -126,7 +130,7 @@ export function TicketForm({
                   <SelectContent>
                     {PRIORITIES.map((p) => (
                       <SelectItem key={p} value={p}>
-                        {priorityConfig[p].label}
+                        {t(`priority.${p}`)}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -142,18 +146,18 @@ export function TicketForm({
             name="assignee_id"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Assignee</FormLabel>
+                <FormLabel>{t('tickets.assignee')}</FormLabel>
                 <Select
                   value={field.value ?? 'unassigned'}
                   onValueChange={(v) => field.onChange(v === 'unassigned' ? null : v)}
                 >
                   <FormControl>
                     <SelectTrigger>
-                      <SelectValue placeholder="Unassigned" />
+                      <SelectValue placeholder={t('tickets.unassigned')} />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value="unassigned">Unassigned</SelectItem>
+                    <SelectItem value="unassigned">{t('tickets.unassigned')}</SelectItem>
                     {members.map((m) => (
                       <SelectItem key={m.user_id} value={m.user_id}>
                         {m.profile?.full_name || m.profile?.email}
@@ -168,10 +172,10 @@ export function TicketForm({
         )}
         <div className="flex justify-end gap-2 pt-2">
           <Button type="button" variant="outline" onClick={onCancel}>
-            Cancel
+            {t('common.cancel')}
           </Button>
           <Button type="submit" disabled={isSubmitting || submitDisabled}>
-            {isSubmitting ? 'Saving…' : submitLabel}
+            {isSubmitting ? t('common.saving') : label}
           </Button>
         </div>
       </form>

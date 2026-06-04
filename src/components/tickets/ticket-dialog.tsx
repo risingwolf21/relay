@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useCreateTicket } from '@/hooks/use-tickets'
 import { useProjectMembers } from '@/hooks/use-members'
 import { useEditableProjects } from '@/hooks/use-projects'
@@ -24,6 +25,7 @@ export function TicketDialog({
   defaultStatus = 'backlog',
   members,
 }: TicketDialogProps) {
+  const { t } = useTranslation()
   const [selectedProjectId, setSelectedProjectId] = useState('')
   const createTicket = useCreateTicket()
   const { data: editableProjects = [] } = useEditableProjects()
@@ -47,24 +49,22 @@ export function TicketDialog({
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent className="max-w-lg">
         <DialogHeader>
-          <DialogTitle>New ticket</DialogTitle>
+          <DialogTitle>{t('tickets.new')}</DialogTitle>
           <DialogDescription>
-            {projectId
-              ? 'Create a new ticket for this project.'
-              : 'Select a project and fill in the ticket details.'}
+            {projectId ? t('tickets.createForProject') : t('tickets.createSelectProject')}
           </DialogDescription>
         </DialogHeader>
         {!projectId && (
           <div className="grid gap-1.5">
-            <Label>Project</Label>
+            <Label>{t('tickets.project')}</Label>
             <Select value={selectedProjectId} onValueChange={(v) => setSelectedProjectId(v ?? '')}>
               <SelectTrigger>
-                <SelectValue placeholder="Select a project…" />
+                <SelectValue placeholder={t('tickets.selectProject')} />
               </SelectTrigger>
               <SelectContent>
                 {editableProjects.length === 0 ? (
                   <div className="px-2 py-4 text-center text-xs text-muted-foreground">
-                    No projects where you can create tickets
+                    {t('tickets.noEditableProjects')}
                   </div>
                 ) : (
                   editableProjects.map((p) => (
@@ -84,7 +84,7 @@ export function TicketDialog({
           onSubmit={handleSubmit}
           onCancel={() => handleOpenChange(false)}
           isSubmitting={createTicket.isPending}
-          submitLabel="Create ticket"
+          submitLabel={t('tickets.createTicket')}
           submitDisabled={!activeProjectId}
         />
       </DialogContent>

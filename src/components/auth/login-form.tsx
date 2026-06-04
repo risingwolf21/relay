@@ -4,6 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { useNavigate, Link } from 'react-router-dom'
 import { toast } from 'sonner'
+import { useTranslation } from 'react-i18next'
 
 import { useAuth } from '@/contexts/auth-context'
 import { Button } from '@/components/ui/button'
@@ -20,6 +21,7 @@ type LoginValues = z.infer<typeof loginSchema>
 export function LoginForm() {
   const { signIn } = useAuth()
   const navigate = useNavigate()
+  const { t } = useTranslation()
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   const form = useForm<LoginValues>({
@@ -46,7 +48,7 @@ export function LoginForm() {
           name="email"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Email</FormLabel>
+              <FormLabel>{t('auth.email')}</FormLabel>
               <FormControl>
                 <Input placeholder="you@example.com" type="email" autoComplete="email" {...field} />
               </FormControl>
@@ -59,7 +61,7 @@ export function LoginForm() {
           name="password"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Password</FormLabel>
+              <FormLabel>{t('auth.password')}</FormLabel>
               <FormControl>
                 <Input placeholder="••••••••" type="password" autoComplete="current-password" {...field} />
               </FormControl>
@@ -68,12 +70,12 @@ export function LoginForm() {
           )}
         />
         <Button type="submit" className="w-full" disabled={isSubmitting}>
-          {isSubmitting ? 'Signing in…' : 'Sign in'}
+          {isSubmitting ? t('auth.signingIn') : t('auth.signIn')}
         </Button>
         <p className="text-center text-sm text-muted-foreground">
-          Don't have an account?{' '}
+          {t('auth.noAccount')}{' '}
           <Link to="/register" className="text-primary underline-offset-4 hover:underline">
-            Sign up
+            {t('auth.signUp')}
           </Link>
         </p>
       </form>

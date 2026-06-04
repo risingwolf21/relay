@@ -1,4 +1,5 @@
 import { MoreHorizontal, Trash2 } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import type { Ticket, ProjectRole } from '@/types/database'
 import { Badge } from '@/components/ui/badge'
 import {
@@ -20,6 +21,7 @@ interface TicketRowProps {
 
 export function TicketRow({ ticket, userRole, onClick }: TicketRowProps) {
   const deleteTicket = useDeleteTicket()
+  const { t } = useTranslation()
   const PriorityIcon = priorityConfig[ticket.priority].icon
   const canDelete = userRole === 'admin'
 
@@ -36,13 +38,13 @@ export function TicketRow({ ticket, userRole, onClick }: TicketRowProps) {
             <PriorityIcon className="size-3" />
           </span>
         </TooltipTrigger>
-        <TooltipContent>{priorityConfig[ticket.priority].label} priority</TooltipContent>
+        <TooltipContent>{t(`priority.${ticket.priority}`)} priority</TooltipContent>
       </Tooltip>
 
       <p className="flex-1 truncate text-sm font-medium">{ticket.title}</p>
 
       <Badge className={`shrink-0 text-xs ${statusConfig[ticket.status].className}`}>
-        {statusConfig[ticket.status].label}
+        {t(`status.${ticket.status}`)}
       </Badge>
 
       {ticket.assignee ? (
@@ -82,7 +84,7 @@ export function TicketRow({ ticket, userRole, onClick }: TicketRowProps) {
               }}
             >
               <Trash2 className="size-4" />
-              Delete
+              {t('common.delete')}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

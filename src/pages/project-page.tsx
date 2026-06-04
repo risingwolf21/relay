@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { ChevronLeft, Plus } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { useProject } from '@/hooks/use-projects'
 import { useProjectMembers } from '@/hooks/use-members'
 import { useAuth } from '@/contexts/auth-context'
@@ -15,6 +16,7 @@ import type { ProjectRole } from '@/types/database'
 export function ProjectPage() {
   const { projectId } = useParams<{ projectId: string }>()
   const { user } = useAuth()
+  const { t } = useTranslation()
   const { data: project, isLoading: projectLoading } = useProject(projectId!)
   const { data: members = [] } = useProjectMembers(projectId!)
   const [ticketOpen, setTicketOpen] = useState(false)
@@ -34,7 +36,7 @@ export function ProjectPage() {
   if (!project) {
     return (
       <div className="flex flex-col items-center justify-center gap-2 p-12">
-        <p className="text-muted-foreground">Project not found</p>
+        <p className="text-muted-foreground">{t('projects.notFound')}</p>
       </div>
     )
   }
@@ -47,7 +49,7 @@ export function ProjectPage() {
         className="inline-flex w-fit items-center gap-1 text-xs text-muted-foreground transition-colors hover:text-foreground"
       >
         <ChevronLeft className="size-3.5" />
-        Dashboard
+        {t('nav.dashboard')}
       </Link>
 
       {/* Header */}
@@ -61,7 +63,7 @@ export function ProjectPage() {
         {canCreate && (
           <Button size="sm" onClick={() => setTicketOpen(true)}>
             <Plus className="size-4" />
-            New ticket
+            {t('tickets.new')}
           </Button>
         )}
       </div>
@@ -69,9 +71,9 @@ export function ProjectPage() {
       {/* Tabs */}
       <Tabs defaultValue="board" className="flex-1">
         <TabsList>
-          <TabsTrigger value="board">Board</TabsTrigger>
-          <TabsTrigger value="list">List</TabsTrigger>
-          <TabsTrigger value="members">Members</TabsTrigger>
+          <TabsTrigger value="board">{t('tabs.board')}</TabsTrigger>
+          <TabsTrigger value="list">{t('tabs.list')}</TabsTrigger>
+          <TabsTrigger value="members">{t('tabs.members')}</TabsTrigger>
         </TabsList>
 
         <TabsContent value="board" className="mt-4">

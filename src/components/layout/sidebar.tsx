@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { NavLink } from 'react-router-dom'
 import { FolderKanban, Plus, Search, TicketPlus } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
 import { useProjects } from '@/hooks/use-projects'
 import { useSavedSearches } from '@/hooks/use-saved-searches'
@@ -12,6 +13,7 @@ import { SavedSearchDialog } from '@/components/search/saved-search-dialog'
 export function Sidebar() {
   const { data: projects = [], isLoading } = useProjects()
   const { data: searches = [] } = useSavedSearches()
+  const { t } = useTranslation()
   const [createOpen, setCreateOpen] = useState(false)
   const [ticketOpen, setTicketOpen] = useState(false)
   const [searchOpen, setSearchOpen] = useState(false)
@@ -29,20 +31,20 @@ export function Sidebar() {
         {/* Projects section */}
         <div className="flex items-center justify-between px-2 py-1">
           <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
-            Projects
+            {t('projects.title')}
           </span>
           <div className="flex items-center gap-0.5">
             <button
               onClick={() => setTicketOpen(true)}
               className="rounded p-0.5 text-muted-foreground transition-colors hover:bg-sidebar-accent hover:text-foreground"
-              title="New ticket"
+              title={t('tickets.new')}
             >
               <TicketPlus className="size-3.5" />
             </button>
             <button
               onClick={() => setCreateOpen(true)}
               className="rounded p-0.5 text-muted-foreground transition-colors hover:bg-sidebar-accent hover:text-foreground"
-              title="New project"
+              title={t('projects.new')}
             >
               <Plus className="size-3.5" />
             </button>
@@ -57,9 +59,9 @@ export function Sidebar() {
           </div>
         ) : projects.length === 0 ? (
           <p className="px-2 py-4 text-center text-xs text-muted-foreground">
-            No projects yet.
+            {t('projects.noProjects')}
             <br />
-            Create your first one!
+            {t('projects.createFirstHint')}
           </p>
         ) : (
           projects.map((project) => (
@@ -83,19 +85,19 @@ export function Sidebar() {
         {/* Saved searches section */}
         <div className="mt-3 flex items-center justify-between px-2 py-1">
           <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
-            Searches
+            {t('search.searches')}
           </span>
           <button
             onClick={() => setSearchOpen(true)}
             className="rounded p-0.5 text-muted-foreground transition-colors hover:bg-sidebar-accent hover:text-foreground"
-            title="New saved search"
+            title={t('search.newSaved')}
           >
             <Plus className="size-3.5" />
           </button>
         </div>
 
         {searches.length === 0 ? (
-          <p className="px-2 py-1 text-xs text-muted-foreground">No saved searches yet.</p>
+          <p className="px-2 py-1 text-xs text-muted-foreground">{t('search.noSavedSearches')}</p>
         ) : (
           searches.map((s) => (
             <NavLink

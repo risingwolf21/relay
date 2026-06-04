@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { Edit2, Trash2 } from 'lucide-react'
 import { useQuery } from '@tanstack/react-query'
+import { useTranslation } from 'react-i18next'
 import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/contexts/auth-context'
 import { useSavedSearch, useDeleteSavedSearch } from '@/hooks/use-saved-searches'
@@ -20,28 +21,15 @@ function useSearchResults(filters: SearchFilters | undefined, userId: string | u
     queryKey: ['search-results', filters, userId],
     queryFn: async (): Promise<Ticket[]> => {
       if (!filters) return []
-
       let query = supabase
         .from('tickets')
         .select('*, assignee:profiles!tickets_assignee_id_fkey(*)')
         .order('created_at', { ascending: false })
-
-      if (filters.project_ids.length > 0) {
-        query = query.in('project_id', filters.project_ids)
-      }
-      if (filters.statuses.length > 0) {
-        query = query.in('status', filters.statuses)
-      }
-      if (filters.priorities.length > 0) {
-        query = query.in('priority', filters.priorities)
-      }
-      if (filters.assignee_me && userId) {
-        query = query.eq('assignee_id', userId)
-      }
-      if (filters.text) {
-        query = query.ilike('title', `%${filters.text}%`)
-      }
-
+      if (filters.project_ids.length > 0) query = query.in('project_id', filters.project_ids)
+      if (filters.statuses.length > 0) query = query.in('status', filters.statuses)
+      if (filters.priorities.length > 0) query = query.in('priority', filters.priorities)
+      if (filters.assignee_me && userId) query = query.eq('assignee_id', userId)
+      if (filters.text) query = query.ilike('title', `%${filters.text}%`)
       const { data, error } = await query
       if (error) throw error
       return (data ?? []) as unknown as Ticket[]
@@ -53,6 +41,7 @@ function useSearchResults(filters: SearchFilters | undefined, userId: string | u
 export function SearchPage() {
   const { searchId } = useParams<{ searchId: string }>()
   const { user } = useAuth()
+  const { t } = useTranslation()
   const navigate = useNavigate()
 
   const { data: search, isLoading: searchLoading } = useSavedSearch(searchId!)
@@ -63,7 +52,6 @@ export function SearchPage() {
   const [selectedTicket, setSelectedTicket] = useState<Ticket | null>(null)
   const [sheetOpen, setSheetOpen] = useState(false)
 
-  // Load members for the selected ticket's project (for role check in sheet)
   const { data: members = [] } = useProjectMembers(selectedTicket?.project_id ?? '')
   const userRole = members.find((m) => m.user_id === user?.id)?.role as ProjectRole | null
 
@@ -84,7 +72,7 @@ export function SearchPage() {
   if (!search) {
     return (
       <div className="flex flex-col items-center justify-center gap-2 p-12">
-        <p className="text-muted-foreground">Search not found</p>
+        <p className="text-muted-foreground">{t('search.notFound')}</p>
       </div>
     )
   }
@@ -98,13 +86,15 @@ export function SearchPage() {
         <div>
           <h1 className="font-heading text-xl font-semibold">{search.name}</h1>
           <p className="mt-0.5 text-sm text-muted-foreground">
-            {isLoading ? 'Searching…' : `${tickets.length} ticket${tickets.length !== 1 ? 's' : ''}`}
+            {isLoading
+              ? t('search.searching')
+              : t('tickets.count', { count: tickets.length })}
           </p>
         </div>
         <div className="flex gap-2">
           <Button size="sm" variant="outline" onClick={() => setEditOpen(true)}>
             <Edit2 className="size-4" />
-            Edit
+            {t('common.edit')}
           </Button>
           <Button
             size="sm"
@@ -113,7 +103,7 @@ export function SearchPage() {
             disabled={deleteSearch.isPending}
           >
             <Trash2 className="size-4" />
-            Delete
+            {t('common.delete')}
           </Button>
         </div>
       </div>
@@ -122,20 +112,20 @@ export function SearchPage() {
       <div className="flex flex-wrap gap-2">
         {search.filters.statuses.map((s) => (
           <span key={s} className={`rounded-full px-2.5 py-0.5 text-xs ${statusConfig[s].className}`}>
-            {statusConfig[s].label}
+            {t(`status.${s}`)}
           </span>
         ))}
         {search.filters.priorities.map((p) => (
           <span key={p} className={`rounded-full px-2.5 py-0.5 text-xs ${priorityConfig[p].className}`}>
-            {priorityConfig[p].label}
+            {t(`priority.${p}`)}
           </span>
         ))}
         {search.filters.assignee_me && (
-          <span className="rounded-full border px-2.5 py-0.5 text-xs">Assigned to me</span>
+          <span className="rounded-full border px-2.5 py-0.5 text-xs">{t('search.assignedToMeChip')}</span>
         )}
         {search.filters.text && (
           <span className="rounded-full border px-2.5 py-0.5 text-xs">
-            Title: &ldquo;{search.filters.text}&rdquo;
+            {t('search.titleFilter', { text: search.filters.text })}
           </span>
         )}
       </div>
@@ -149,12 +139,12 @@ export function SearchPage() {
         </div>
       ) : tickets.length === 0 ? (
         <div className="flex flex-col items-center gap-2 py-16 text-center">
-          <p className="text-muted-foreground">No tickets match this search.</p>
+          <p className="text-muted-foreground">{t('search.noResults')}</p>
           <button
             onClick={() => setEditOpen(true)}
             className="text-sm underline text-muted-foreground hover:text-foreground"
           >
-            Adjust filters
+            {t('search.adjustFilters')}
           </button>
         </div>
       ) : (
@@ -170,7 +160,7 @@ export function SearchPage() {
                 <PriorityIcon className={`size-4 shrink-0 ${priorityConfig[ticket.priority].className}`} />
                 <span className="flex-1 truncate text-sm font-medium">{ticket.title}</span>
                 <Badge className={`shrink-0 text-xs ${statusConfig[ticket.status].className}`}>
-                  {statusConfig[ticket.status].label}
+                  {t(`status.${ticket.status}`)}
                 </Badge>
                 {ticket.assignee && (
                   <Avatar className="size-6 shrink-0">
