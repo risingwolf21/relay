@@ -105,30 +105,10 @@ jobs:
         id: deployment
         uses: actions/deploy-pages@v4
 
-  update-hash:
-    runs-on: ubuntu-latest
-    needs: [deploy, prepare]
-    environment: production
-    name: "Update latest hash"
-    steps:
-      - name: Update Supabase Hash
-        run: |
-          curl -X POST "${{ vars.SUPABASE_DB_URL }}/rest/v1/app_config" \
-          -H "apikey: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}" \
-          -H "Authorization: Bearer ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}" \
-          -H "Content-Type: application/json" \
-          -H "Content-Profile: public" \
-          -H "Accept-Profile: public" \
-          -H "Prefer: resolution=merge-duplicates" \
-          -d '{
-            "key": "latest_deployment_hash",
-            "value": "${{ needs.prepare.outputs.short_sha }}"
-          }'
-
   cleanup-artifact:
     name: "Cleanup Artifacts"
     runs-on: ubuntu-latest
-    needs: [update-hash]
+    needs: [deploy]
     steps:
       - uses: actions/checkout@v4
       - name: Delete Pages artifact
