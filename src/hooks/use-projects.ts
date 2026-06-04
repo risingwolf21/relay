@@ -2,7 +2,28 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '@/lib/supabase'
-import type { Project } from '@/types/database'
+import { useAuth } from '@/contexts/auth-context'
+import type { Project, ProjectRow, ProjectRole } from '@/types/database'
+
+export function useEditableProjects() {
+  const { user } = useAuth()
+  return useQuery({
+    queryKey: ['editable-projects', user?.id],
+    queryFn: async (): Promise<(ProjectRow & { role: ProjectRole })[]> => {
+      const { data, error } = await supabase
+        .from('project_members')
+        .select('role, project:projects(*)')
+        .eq('user_id', user!.id)
+        .in('role', ['admin', 'editor'])
+      if (error) throw error
+      return (data ?? []).map((r) => ({
+        ...(r.project as unknown as ProjectRow),
+        role: r.role as ProjectRole,
+      }))
+    },
+    enabled: !!user,
+  })
+}
 
 export function useProjects() {
   return useQuery({

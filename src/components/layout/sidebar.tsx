@@ -1,14 +1,16 @@
 import { useState } from 'react'
 import { NavLink } from 'react-router-dom'
-import { FolderKanban, Plus } from 'lucide-react'
+import { FolderKanban, Plus, TicketPlus } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useProjects } from '@/hooks/use-projects'
 import { UserNav } from './user-nav'
 import { CreateProjectDialog } from '@/components/projects/create-project-dialog'
+import { TicketDialog } from '@/components/tickets/ticket-dialog'
 
 export function Sidebar() {
   const { data: projects = [], isLoading } = useProjects()
   const [createOpen, setCreateOpen] = useState(false)
+  const [ticketOpen, setTicketOpen] = useState(false)
 
   return (
     <aside className="flex h-svh w-56 shrink-0 flex-col border-r bg-sidebar">
@@ -22,13 +24,22 @@ export function Sidebar() {
       <div className="flex flex-1 flex-col gap-1 overflow-y-auto p-2">
         <div className="flex items-center justify-between px-2 py-1">
           <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Projects</span>
-          <button
-            onClick={() => setCreateOpen(true)}
-            className="rounded p-0.5 text-muted-foreground transition-colors hover:bg-sidebar-accent hover:text-foreground"
-            title="New project"
-          >
-            <Plus className="size-3.5" />
-          </button>
+          <div className="flex items-center gap-0.5">
+            <button
+              onClick={() => setTicketOpen(true)}
+              className="rounded p-0.5 text-muted-foreground transition-colors hover:bg-sidebar-accent hover:text-foreground"
+              title="New ticket"
+            >
+              <TicketPlus className="size-3.5" />
+            </button>
+            <button
+              onClick={() => setCreateOpen(true)}
+              className="rounded p-0.5 text-muted-foreground transition-colors hover:bg-sidebar-accent hover:text-foreground"
+              title="New project"
+            >
+              <Plus className="size-3.5" />
+            </button>
+          </div>
         </div>
 
         {isLoading ? (
@@ -69,6 +80,7 @@ export function Sidebar() {
       </div>
 
       <CreateProjectDialog open={createOpen} onOpenChange={setCreateOpen} />
+      <TicketDialog open={ticketOpen} onOpenChange={setTicketOpen} />
     </aside>
   )
 }

@@ -29,6 +29,7 @@ interface TicketFormProps {
   onCancel: () => void
   isSubmitting?: boolean
   submitLabel?: string
+  submitDisabled?: boolean
 }
 
 export function TicketForm({
@@ -38,6 +39,7 @@ export function TicketForm({
   onCancel,
   isSubmitting,
   submitLabel = 'Save',
+  submitDisabled,
 }: TicketFormProps) {
   const form = useForm<TicketFormValues>({
     resolver: zodResolver(ticketSchema),
@@ -168,7 +170,7 @@ export function TicketForm({
           <Button type="button" variant="outline" onClick={onCancel}>
             Cancel
           </Button>
-          <Button type="submit" disabled={isSubmitting}>
+          <Button type="submit" disabled={isSubmitting || submitDisabled}>
             {isSubmitting ? 'Saving…' : submitLabel}
           </Button>
         </div>
