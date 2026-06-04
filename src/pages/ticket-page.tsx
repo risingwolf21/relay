@@ -1,10 +1,10 @@
 import { useState } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
-import { ChevronLeft, Trash2 } from 'lucide-react'
+import { ChevronLeft, Trash2, RefreshCw, Calendar, Link2 } from 'lucide-react'
 import { useQuery } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
 import { supabase } from '@/lib/supabase'
-import { useUpdateTicket, useDeleteTicket } from '@/hooks/use-tickets'
+import { useUpdateTicket, useDeleteTicket, useCreateTicket } from '@/hooks/use-tickets'
 import { useProjectMembers } from '@/hooks/use-members'
 import { useAuth } from '@/contexts/auth-context'
 import { TicketForm, type TicketFormValues } from '@/components/tickets/ticket-form'
@@ -13,8 +13,42 @@ import { TicketActivityFeed } from '@/components/tickets/ticket-activity-feed'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
-import { priorityConfig, statusConfig, formatDate } from '@/lib/ticket-utils'
-import type { Ticket, ProjectRole } from '@/types/database'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { priorityConfig, statusConfig, formatDate, getInitials } from '@/lib/ticket-utils'
+import type { Ticket, ProjectRole, RecurrenceFrequency } from '@/types/database'
+
+function calculateNextDueDate(currentDate: string | null, frequency: RecurrenceFrequency): string {
+  const base = currentDate ? new Date(currentDate) : new Date()
+  switch (frequency) {
+    case 'daily': base.setDate(base.getDate() + 1); break
+    case 'weekly': base.setDate(base.getDate() + 7); break
+    case 'biweekly': base.setDate(base.getDate() + 14); break
+    case 'monthly': base.setMonth(base.getMonth() + 1); break
+  }
+  return base.toISOString().split('T')[0]
+}
+
+function DueDateBadge({ dueDate, t }: { dueDate: string; t: (key: string) => string }) {
+  const today = new Date().toISOString().split('T')[0]
+  const isOverdue = dueDate < today
+  const isToday = dueDate === today
+  return (
+    <span
+      className={`inline-flex items-center gap-1 text-sm ${
+        isOverdue
+          ? 'text-destructive'
+          : isToday
+            ? 'text-amber-600 dark:text-amber-400'
+            : 'text-foreground'
+      }`}
+    >
+      <Calendar className="size-3.5" />
+      {new Date(dueDate + 'T12:00:00').toLocaleDateString()}
+      {isOverdue && <span className="ml-1 text-xs font-medium">({t('tickets.overdue')})</span>}
+      {isToday && <span className="ml-1 text-xs font-medium">({t('tickets.dueToday')})</span>}
+    </span>
+  )
+}
 
 function useTicket(ticketId: string) {
   return useQuery({
@@ -42,7 +76,22 @@ export function TicketPage() {
   const { data: members = [] } = useProjectMembers(projectId!)
   const updateTicket = useUpdateTicket()
   const deleteTicket = useDeleteTicket()
+  const createTicket = useCreateTicket()
   const [editing, setEditing] = useState(false)
+
+  const { data: parentTicket } = useQuery({
+    queryKey: ['ticket-stub', ticket?.parent_ticket_id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('tickets')
+        .select('id, title, project_id')
+        .eq('id', ticket!.parent_ticket_id!)
+        .single()
+      if (error) throw error
+      return data as { id: string; title: string; project_id: string }
+    },
+    enabled: !!ticket?.parent_ticket_id,
+  })
 
   const currentUserRole = members.find((m) => m.user_id === user?.id)?.role as ProjectRole | null
   const canEdit = currentUserRole === 'admin' || currentUserRole === 'editor'
@@ -56,6 +105,22 @@ export function TicketPage() {
   async function handleDelete() {
     await deleteTicket.mutateAsync({ id: ticket!.id, project_id: ticket!.project_id })
     navigate(`/projects/${projectId}`)
+  }
+
+  async function handleCreateNextRecurrence() {
+    if (!ticket?.recurrence_frequency) return
+    const nextDue = calculateNextDueDate(ticket.due_date, ticket.recurrence_frequency)
+    await createTicket.mutateAsync({
+      project_id: ticket.project_id,
+      title: ticket.title,
+      description: ticket.description ?? undefined,
+      status: 'backlog',
+      priority: ticket.priority,
+      assignee_id: ticket.assignee_id,
+      due_date: nextDue,
+      recurrence_frequency: ticket.recurrence_frequency,
+      parent_ticket_id: ticket.id,
+    })
   }
 
   if (ticketLoading) {
@@ -103,6 +168,12 @@ export function TicketPage() {
             <Badge className={statusConfig[ticket.status].className}>
               {t(`status.${ticket.status}`)}
             </Badge>
+            {ticket.recurrence_frequency && (
+              <Badge variant="secondary" className="gap-1">
+                <RefreshCw className="size-3" />
+                {t(`tickets.recurrence_${ticket.recurrence_frequency}`)}
+              </Badge>
+            )}
           </div>
           <div className="flex shrink-0 gap-2">
             {canEdit && !editing && (
@@ -128,7 +199,6 @@ export function TicketPage() {
           <h1 className="font-heading text-2xl font-semibold">{ticket.title}</h1>
           <p className="mt-1 text-sm text-muted-foreground">
             {t('tickets.created', { date: formatDate(ticket.created_at) })}
-            {ticket.assignee && t('tickets.assignedTo', { name: ticket.assignee.full_name || ticket.assignee.email })}
           </p>
         </div>
       </div>
@@ -144,6 +214,8 @@ export function TicketPage() {
             status: ticket.status,
             priority: ticket.priority,
             assignee_id: ticket.assignee_id,
+            due_date: ticket.due_date,
+            recurrence_frequency: ticket.recurrence_frequency,
           }}
           members={members}
           onSubmit={handleSubmit}
@@ -152,14 +224,71 @@ export function TicketPage() {
           submitLabel={t('tickets.saveChanges')}
         />
       ) : (
-        ticket.description && (
+        <div className="grid gap-4 text-sm">
+          {ticket.assignee && (
+            <div>
+              <p className="mb-1 text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                {t('tickets.assignee')}
+              </p>
+              <div className="flex items-center gap-2">
+                <Avatar className="size-6">
+                  <AvatarImage src={ticket.assignee.avatar_url ?? undefined} />
+                  <AvatarFallback className="text-[10px]">
+                    {getInitials(ticket.assignee.full_name, ticket.assignee.email ?? '')}
+                  </AvatarFallback>
+                </Avatar>
+                <span>{ticket.assignee.full_name || ticket.assignee.email}</span>
+              </div>
+            </div>
+          )}
+          {ticket.due_date && (
+            <div>
+              <p className="mb-1 text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                {t('tickets.dueDate')}
+              </p>
+              <DueDateBadge dueDate={ticket.due_date} t={t} />
+            </div>
+          )}
+          {parentTicket && (
+            <div>
+              <p className="mb-1 text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                {t('tickets.parentTicket')}
+              </p>
+              <Link
+                to={`/projects/${parentTicket.project_id}/tickets/${parentTicket.id}`}
+                className="inline-flex items-center gap-1.5 text-sm text-primary hover:underline"
+              >
+                <Link2 className="size-3.5" />
+                {parentTicket.title}
+              </Link>
+            </div>
+          )}
+          {ticket.description && (
+            <div>
+              <p className="mb-1 text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                {t('tickets.description')}
+              </p>
+              <p className="whitespace-pre-wrap">{ticket.description}</p>
+            </div>
+          )}
+        </div>
+      )}
+
+      {canEdit && !editing && ticket.recurrence_frequency && (
+        <>
+          <Separator />
           <div>
-            <p className="mb-2 text-xs font-medium uppercase tracking-wider text-muted-foreground">
-              {t('tickets.description')}
-            </p>
-            <p className="whitespace-pre-wrap text-sm">{ticket.description}</p>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleCreateNextRecurrence}
+              disabled={createTicket.isPending}
+            >
+              <RefreshCw className="size-4" />
+              {t('tickets.createNextRecurrence')}
+            </Button>
           </div>
-        )
+        </>
       )}
 
       <Separator />

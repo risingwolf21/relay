@@ -2,7 +2,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/contexts/auth-context'
-import type { Ticket, TicketStatus, TicketPriority } from '@/types/database'
+import type { Ticket, TicketStatus, TicketPriority, RecurrenceFrequency } from '@/types/database'
 
 export function useTickets(projectId: string) {
   return useQuery({
@@ -28,6 +28,9 @@ interface CreateTicketInput {
   status: TicketStatus
   priority: TicketPriority
   assignee_id?: string | null
+  due_date?: string | null
+  recurrence_frequency?: RecurrenceFrequency | null
+  parent_ticket_id?: string | null
 }
 
 export function useCreateTicket() {
@@ -74,6 +77,9 @@ interface UpdateTicketInput {
   priority?: TicketPriority
   assignee_id?: string | null
   position?: number
+  due_date?: string | null
+  recurrence_frequency?: RecurrenceFrequency | null
+  parent_ticket_id?: string | null
 }
 
 export function useUpdateTicket() {

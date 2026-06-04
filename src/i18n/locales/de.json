@@ -104,7 +104,21 @@
     "dropTicketsHere": "Tickets hier ablegen",
     "loadingBoard": "Board wird geladen…",
     "addTicketTo": "Ticket zu {{status}} hinzufügen",
-    "priority_label": "Priorität: {{priority}}"
+    "priority_label": "Priorität: {{priority}}",
+    "dueDate": "Fälligkeitsdatum",
+    "noDueDate": "Kein Fälligkeitsdatum",
+    "overdue": "Überfällig",
+    "dueToday": "Heute fällig",
+    "recurrence": "Wiederholung",
+    "recurrenceLabel": "Wiederkehrend",
+    "noRecurrence": "Nicht wiederkehrend",
+    "createNextRecurrence": "Nächste Wiederholung erstellen",
+    "parentTicket": "Vorherige Wiederholung",
+    "recurrenceFrequency": "Häufigkeit",
+    "recurrence_daily": "Täglich",
+    "recurrence_weekly": "Wöchentlich",
+    "recurrence_biweekly": "Zweiwöchentlich",
+    "recurrence_monthly": "Monatlich"
   },
   "status": {
     "backlog": "Rückstand",

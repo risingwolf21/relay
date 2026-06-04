@@ -13,7 +13,7 @@ function DropdownMenuContent({
 }: MenuPrimitive.Popup.Props & { sideOffset?: number; align?: 'start' | 'center' | 'end' }) {
   return (
     <MenuPrimitive.Portal>
-      <MenuPrimitive.Positioner sideOffset={sideOffset} align={align}>
+      <MenuPrimitive.Positioner sideOffset={sideOffset} align={align} className="z-50">
         <MenuPrimitive.Popup
           data-slot="dropdown-menu-content"
           className={cn(
