@@ -1,40 +1,52 @@
+import { useTranslation } from 'react-i18next'
 import { useTicketActivity } from '@/hooks/use-ticket-activity'
-import { statusConfig, priorityConfig, formatDate, getInitials } from '@/lib/ticket-utils'
+import { formatDate, getInitials } from '@/lib/ticket-utils'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import type { TicketActivity } from '@/types/database'
-
-function activityLabel(event: TicketActivity): { text: string; detail?: string } {
-  const actor = event.actor?.full_name || event.actor?.email || 'Someone'
-  switch (event.type) {
-    case 'created':
-      return { text: `${actor} created this ticket` }
-    case 'status_changed': {
-      const oldLabel = event.old_value ? statusConfig[event.old_value as keyof typeof statusConfig]?.label : event.old_value
-      const newLabel = event.new_value ? statusConfig[event.new_value as keyof typeof statusConfig]?.label : event.new_value
-      return { text: `${actor} changed status`, detail: `${oldLabel} → ${newLabel}` }
-    }
-    case 'priority_changed': {
-      const oldLabel = event.old_value ? priorityConfig[event.old_value as keyof typeof priorityConfig]?.label : event.old_value
-      const newLabel = event.new_value ? priorityConfig[event.new_value as keyof typeof priorityConfig]?.label : event.new_value
-      return { text: `${actor} changed priority`, detail: `${oldLabel} → ${newLabel}` }
-    }
-    case 'assigned':
-      if (!event.new_value) return { text: `${actor} removed assignee` }
-      if (!event.old_value) return { text: `${actor} assigned this ticket` }
-      return { text: `${actor} changed assignee` }
-    case 'title_changed':
-      return { text: `${actor} renamed this ticket` }
-    default:
-      return { text: `${actor} updated this ticket` }
-  }
-}
 
 interface TicketActivityFeedProps {
   ticketId: string
 }
 
 export function TicketActivityFeed({ ticketId }: TicketActivityFeedProps) {
+  const { t } = useTranslation()
   const { data: events = [], isLoading } = useTicketActivity(ticketId)
+
+  function activityLabel(event: TicketActivity): { text: string; detail?: string } {
+    const actor = event.actor?.full_name || event.actor?.email || 'Someone'
+    switch (event.type) {
+      case 'created':
+        return { text: t('activity.created', { actor }) }
+      case 'status_changed': {
+        const oldLabel = event.old_value
+          ? t(`status.${event.old_value}`, { defaultValue: event.old_value })
+          : event.old_value
+        const newLabel = event.new_value
+          ? t(`status.${event.new_value}`, { defaultValue: event.new_value })
+          : event.new_value
+        return { text: t('activity.statusChanged', { actor }), detail: `${oldLabel} → ${newLabel}` }
+      }
+      case 'priority_changed': {
+        const oldLabel = event.old_value
+          ? t(`priority.${event.old_value}`, { defaultValue: event.old_value })
+          : event.old_value
+        const newLabel = event.new_value
+          ? t(`priority.${event.new_value}`, { defaultValue: event.new_value })
+          : event.new_value
+        return { text: t('activity.priorityChanged', { actor }), detail: `${oldLabel} → ${newLabel}` }
+      }
+      case 'assigned':
+        if (!event.new_value) return { text: t('activity.assigneeRemoved', { actor }) }
+        if (!event.old_value) return { text: t('activity.assigned', { actor }) }
+        return { text: t('activity.assigneeChanged', { actor }) }
+      case 'title_changed':
+        return { text: t('activity.renamed', { actor }) }
+      default:
+        return { text: t('activity.updated', { actor }) }
+    }
+  }
+
+  // suppress unused import warning
 
   if (isLoading) {
     return (
@@ -50,7 +62,7 @@ export function TicketActivityFeed({ ticketId }: TicketActivityFeedProps) {
   }
 
   if (events.length === 0) {
-    return <p className="text-sm text-muted-foreground">No activity yet.</p>
+    return <p className="text-sm text-muted-foreground">{t('activity.empty')}</p>
   }
 
   return (

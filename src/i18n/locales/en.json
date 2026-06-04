@@ -1,0 +1,195 @@
+{
+  "common": {
+    "cancel": "Cancel",
+    "save": "Save",
+    "saving": "Saving…",
+    "delete": "Delete",
+    "edit": "Edit",
+    "close": "Close",
+    "loading": "Loading…",
+    "back": "Back",
+    "create": "Create",
+    "update": "Update",
+    "search": "Search",
+    "settings": "Settings"
+  },
+  "auth": {
+    "email": "Email",
+    "password": "Password",
+    "fullName": "Full name",
+    "signIn": "Sign in",
+    "signingIn": "Signing in…",
+    "signUp": "Sign up",
+    "signOut": "Sign out",
+    "creatingAccount": "Creating account…",
+    "createAccount": "Create account",
+    "noAccount": "Don't have an account?",
+    "haveAccount": "Already have an account?",
+    "accountCreated": "Account created! Check your email to confirm."
+  },
+  "login": {
+    "title": "Welcome back",
+    "subtitle": "Sign in to your Relay account"
+  },
+  "register": {
+    "title": "Create your account",
+    "subtitle": "Start tracking work with Relay"
+  },
+  "nav": {
+    "home": "Home",
+    "new": "New",
+    "search": "Search",
+    "menu": "Menu",
+    "dashboard": "Dashboard",
+    "openFullPage": "Open full page",
+    "fullPage": "Full page"
+  },
+  "projects": {
+    "title": "Projects",
+    "new": "New project",
+    "noProjects": "No projects yet.",
+    "createFirstHint": "Create your first one!",
+    "notFound": "Project not found",
+    "dashboardDescription": "Manage your projects and track progress",
+    "noProjectsEmpty": "No projects yet",
+    "noProjectsHint": "Create a project to start tracking work",
+    "createFirst": "Create your first project",
+    "name": "Name",
+    "description": "Description",
+    "slug": "Slug",
+    "slugHint": "Used in URLs. Must be unique.",
+    "createTitle": "New project",
+    "createDescription": "Create a project to start tracking work.",
+    "creating": "Creating…",
+    "namePlaceholder": "My project",
+    "descriptionPlaceholder": "What is this project about?"
+  },
+  "members": {
+    "title": "Members",
+    "titleWithCount": "Members ({{count}})",
+    "loading": "Loading members…",
+    "you": "(you)",
+    "remove": "Remove member",
+    "inviteTitle": "Invite a member",
+    "invite": "Invite",
+    "emailPlaceholder": "user@example.com"
+  },
+  "tickets": {
+    "new": "New ticket",
+    "createForProject": "Create a new ticket for this project.",
+    "createSelectProject": "Select a project and fill in the ticket details.",
+    "project": "Project",
+    "selectProject": "Select a project…",
+    "noEditableProjects": "No projects where you can create tickets",
+    "title": "Title",
+    "titlePlaceholder": "What needs to be done?",
+    "description": "Description",
+    "descriptionPlaceholder": "Add more details…",
+    "status": "Status",
+    "priority": "Priority",
+    "assignee": "Assignee",
+    "unassigned": "Unassigned",
+    "saveChanges": "Save changes",
+    "createTicket": "Create ticket",
+    "deleteTicket": "Delete ticket",
+    "created": "Created {{date}}",
+    "assignedTo": " · Assigned to {{name}}",
+    "notFound": "Ticket not found",
+    "backToProject": "Back to project",
+    "loading": "Loading tickets…",
+    "count_one": "{{count}} ticket",
+    "count_other": "{{count}} tickets",
+    "noTickets": "No tickets yet",
+    "createFirstTicket": "Create your first ticket",
+    "dropTicketsHere": "Drop tickets here",
+    "loadingBoard": "Loading board…",
+    "addTicketTo": "Add ticket to {{status}}",
+    "priority_label": "{{priority}} priority"
+  },
+  "status": {
+    "backlog": "Backlog",
+    "todo": "To Do",
+    "in_progress": "In Progress",
+    "in_review": "In Review",
+    "done": "Done"
+  },
+  "priority": {
+    "urgent": "Urgent",
+    "high": "High",
+    "medium": "Medium",
+    "low": "Low"
+  },
+  "comments": {
+    "title": "Comments",
+    "titleWithCount": "Comments ({{count}})",
+    "placeholder": "Add a comment…",
+    "hint": "⌘ + Enter to submit",
+    "posting": "Posting…",
+    "submit": "Comment",
+    "empty": "No comments yet. Be the first!",
+    "delete": "Delete comment"
+  },
+  "activity": {
+    "title": "Activity",
+    "empty": "No activity yet.",
+    "created": "{{actor}} created this ticket",
+    "statusChanged": "{{actor}} changed status",
+    "priorityChanged": "{{actor}} changed priority",
+    "assigneeRemoved": "{{actor}} removed assignee",
+    "assigned": "{{actor}} assigned this ticket",
+    "assigneeChanged": "{{actor}} changed assignee",
+    "renamed": "{{actor}} renamed this ticket",
+    "updated": "{{actor}} updated this ticket"
+  },
+  "search": {
+    "searches": "Searches",
+    "newSaved": "New saved search",
+    "editSaved": "Edit search",
+    "name": "Name",
+    "namePlaceholder": "e.g. My open tickets",
+    "titleContains": "Title contains",
+    "searchTextPlaceholder": "Search text…",
+    "projectsFilter": "Projects",
+    "allProjects": "All projects",
+    "statusFilter": "Status",
+    "allStatuses": "All statuses",
+    "priorityFilter": "Priority",
+    "allPriorities": "All priorities",
+    "assignedToMe": "Only assigned to me ({{email}})",
+    "saveSearch": "Save search",
+    "updateSearch": "Update search",
+    "noSavedSearches": "No saved searches yet.",
+    "notFound": "Search not found",
+    "searching": "Searching…",
+    "noResults": "No tickets match this search.",
+    "adjustFilters": "Adjust filters",
+    "assignedToMeChip": "Assigned to me",
+    "titleFilter": "Title: \"{{text}}\""
+  },
+  "settings": {
+    "title": "Settings",
+    "languageLabel": "Interface Language",
+    "languages": {
+      "en": "English",
+      "de": "Deutsch"
+    }
+  },
+  "user": {
+    "myAccount": "My account",
+    "settings": "Settings"
+  },
+  "pages": {
+    "notFound": "Page not found",
+    "goToDashboard": "Go to dashboard"
+  },
+  "tabs": {
+    "board": "Board",
+    "list": "List",
+    "members": "Members"
+  },
+  "roles": {
+    "admin": "Admin",
+    "editor": "Editor",
+    "viewer": "Viewer"
+  }
+}

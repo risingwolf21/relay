@@ -10,12 +10,25 @@ export function useProjectMembers(projectId: string) {
   return useQuery({
     queryKey: ['members', projectId],
     queryFn: async (): Promise<MemberWithProfile[]> => {
-      const { data, error } = await supabase
+      const { data: memberRows, error: memberError } = await supabase
         .from('project_members')
-        .select('*, profile:profiles(*)')
+        .select('*')
         .eq('project_id', projectId)
-      if (error) throw error
-      return (data ?? []) as unknown as MemberWithProfile[]
+      if (memberError) throw memberError
+      if (!memberRows?.length) return []
+
+      const userIds = memberRows.map((m) => m.user_id)
+      const { data: profiles, error: profileError } = await supabase
+        .from('profiles')
+        .select('*')
+        .in('id', userIds)
+      if (profileError) throw profileError
+
+      const profileMap = new Map((profiles ?? []).map((p) => [p.id, p]))
+      return memberRows.map((m) => ({
+        ...m,
+        profile: profileMap.get(m.user_id) as Profile,
+      }))
     },
     enabled: !!projectId,
   })

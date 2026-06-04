@@ -1,0 +1,195 @@
+{
+  "common": {
+    "cancel": "Abbrechen",
+    "save": "Speichern",
+    "saving": "Wird gespeichert…",
+    "delete": "Löschen",
+    "edit": "Bearbeiten",
+    "close": "Schließen",
+    "loading": "Wird geladen…",
+    "back": "Zurück",
+    "create": "Erstellen",
+    "update": "Aktualisieren",
+    "search": "Suche",
+    "settings": "Einstellungen"
+  },
+  "auth": {
+    "email": "E-Mail",
+    "password": "Passwort",
+    "fullName": "Vollständiger Name",
+    "signIn": "Anmelden",
+    "signingIn": "Wird angemeldet…",
+    "signUp": "Registrieren",
+    "signOut": "Abmelden",
+    "creatingAccount": "Konto wird erstellt…",
+    "createAccount": "Konto erstellen",
+    "noAccount": "Noch kein Konto?",
+    "haveAccount": "Bereits ein Konto?",
+    "accountCreated": "Konto erstellt! Prüfe deine E-Mail zur Bestätigung."
+  },
+  "login": {
+    "title": "Willkommen zurück",
+    "subtitle": "Melde dich in deinem Relay-Konto an"
+  },
+  "register": {
+    "title": "Konto erstellen",
+    "subtitle": "Starte die Arbeitsverfolgung mit Relay"
+  },
+  "nav": {
+    "home": "Startseite",
+    "new": "Neu",
+    "search": "Suche",
+    "menu": "Menü",
+    "dashboard": "Dashboard",
+    "openFullPage": "Vollansicht öffnen",
+    "fullPage": "Vollansicht"
+  },
+  "projects": {
+    "title": "Projekte",
+    "new": "Neues Projekt",
+    "noProjects": "Noch keine Projekte.",
+    "createFirstHint": "Erstelle dein erstes!",
+    "notFound": "Projekt nicht gefunden",
+    "dashboardDescription": "Projekte verwalten und Fortschritt verfolgen",
+    "noProjectsEmpty": "Noch keine Projekte",
+    "noProjectsHint": "Erstelle ein Projekt, um mit der Arbeit zu beginnen",
+    "createFirst": "Erstes Projekt erstellen",
+    "name": "Name",
+    "description": "Beschreibung",
+    "slug": "Slug",
+    "slugHint": "Wird in URLs verwendet. Muss eindeutig sein.",
+    "createTitle": "Neues Projekt",
+    "createDescription": "Erstelle ein Projekt, um mit der Arbeit zu beginnen.",
+    "creating": "Wird erstellt…",
+    "namePlaceholder": "Mein Projekt",
+    "descriptionPlaceholder": "Worum geht es in diesem Projekt?"
+  },
+  "members": {
+    "title": "Mitglieder",
+    "titleWithCount": "Mitglieder ({{count}})",
+    "loading": "Mitglieder werden geladen…",
+    "you": "(du)",
+    "remove": "Mitglied entfernen",
+    "inviteTitle": "Mitglied einladen",
+    "invite": "Einladen",
+    "emailPlaceholder": "nutzer@beispiel.de"
+  },
+  "tickets": {
+    "new": "Neues Ticket",
+    "createForProject": "Neues Ticket für dieses Projekt erstellen.",
+    "createSelectProject": "Wähle ein Projekt und fülle die Ticketdetails aus.",
+    "project": "Projekt",
+    "selectProject": "Projekt auswählen…",
+    "noEditableProjects": "Keine Projekte, in denen du Tickets erstellen kannst",
+    "title": "Titel",
+    "titlePlaceholder": "Was muss erledigt werden?",
+    "description": "Beschreibung",
+    "descriptionPlaceholder": "Weitere Details hinzufügen…",
+    "status": "Status",
+    "priority": "Priorität",
+    "assignee": "Zugewiesen an",
+    "unassigned": "Nicht zugewiesen",
+    "saveChanges": "Änderungen speichern",
+    "createTicket": "Ticket erstellen",
+    "deleteTicket": "Ticket löschen",
+    "created": "Erstellt {{date}}",
+    "assignedTo": " · Zugewiesen an {{name}}",
+    "notFound": "Ticket nicht gefunden",
+    "backToProject": "Zurück zum Projekt",
+    "loading": "Tickets werden geladen…",
+    "count_one": "{{count}} Ticket",
+    "count_other": "{{count}} Tickets",
+    "noTickets": "Noch keine Tickets",
+    "createFirstTicket": "Erstes Ticket erstellen",
+    "dropTicketsHere": "Tickets hier ablegen",
+    "loadingBoard": "Board wird geladen…",
+    "addTicketTo": "Ticket zu {{status}} hinzufügen",
+    "priority_label": "Priorität: {{priority}}"
+  },
+  "status": {
+    "backlog": "Rückstand",
+    "todo": "Zu erledigen",
+    "in_progress": "In Bearbeitung",
+    "in_review": "In Überprüfung",
+    "done": "Erledigt"
+  },
+  "priority": {
+    "urgent": "Dringend",
+    "high": "Hoch",
+    "medium": "Mittel",
+    "low": "Niedrig"
+  },
+  "comments": {
+    "title": "Kommentare",
+    "titleWithCount": "Kommentare ({{count}})",
+    "placeholder": "Kommentar hinzufügen…",
+    "hint": "⌘ + Enter zum Absenden",
+    "posting": "Wird gepostet…",
+    "submit": "Kommentieren",
+    "empty": "Noch keine Kommentare. Sei der Erste!",
+    "delete": "Kommentar löschen"
+  },
+  "activity": {
+    "title": "Aktivität",
+    "empty": "Noch keine Aktivität.",
+    "created": "{{actor}} hat dieses Ticket erstellt",
+    "statusChanged": "{{actor}} hat den Status geändert",
+    "priorityChanged": "{{actor}} hat die Priorität geändert",
+    "assigneeRemoved": "{{actor}} hat die Zuweisung entfernt",
+    "assigned": "{{actor}} hat dieses Ticket zugewiesen",
+    "assigneeChanged": "{{actor}} hat die Zuweisung geändert",
+    "renamed": "{{actor}} hat dieses Ticket umbenannt",
+    "updated": "{{actor}} hat dieses Ticket aktualisiert"
+  },
+  "search": {
+    "searches": "Suchen",
+    "newSaved": "Neue gespeicherte Suche",
+    "editSaved": "Suche bearbeiten",
+    "name": "Name",
+    "namePlaceholder": "z. B. Meine offenen Tickets",
+    "titleContains": "Titel enthält",
+    "searchTextPlaceholder": "Suchtext…",
+    "projectsFilter": "Projekte",
+    "allProjects": "Alle Projekte",
+    "statusFilter": "Status",
+    "allStatuses": "Alle Status",
+    "priorityFilter": "Priorität",
+    "allPriorities": "Alle Prioritäten",
+    "assignedToMe": "Nur mir zugewiesen ({{email}})",
+    "saveSearch": "Suche speichern",
+    "updateSearch": "Suche aktualisieren",
+    "noSavedSearches": "Noch keine gespeicherten Suchen.",
+    "notFound": "Suche nicht gefunden",
+    "searching": "Sucht…",
+    "noResults": "Keine Tickets entsprechen dieser Suche.",
+    "adjustFilters": "Filter anpassen",
+    "assignedToMeChip": "Mir zugewiesen",
+    "titleFilter": "Titel: \"{{text}}\""
+  },
+  "settings": {
+    "title": "Einstellungen",
+    "languageLabel": "Benutzeroberflächen-Sprache",
+    "languages": {
+      "en": "English",
+      "de": "Deutsch"
+    }
+  },
+  "user": {
+    "myAccount": "Mein Konto",
+    "settings": "Einstellungen"
+  },
+  "pages": {
+    "notFound": "Seite nicht gefunden",
+    "goToDashboard": "Zum Dashboard"
+  },
+  "tabs": {
+    "board": "Board",
+    "list": "Liste",
+    "members": "Mitglieder"
+  },
+  "roles": {
+    "admin": "Admin",
+    "editor": "Bearbeiter",
+    "viewer": "Betrachter"
+  }
+}

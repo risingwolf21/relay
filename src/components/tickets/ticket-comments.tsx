@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Trash2 } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { useAuth } from '@/contexts/auth-context'
 import { useTicketComments, useCreateComment, useDeleteComment } from '@/hooks/use-ticket-comments'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
@@ -13,6 +14,7 @@ interface TicketCommentsProps {
 
 export function TicketComments({ ticketId }: TicketCommentsProps) {
   const { user } = useAuth()
+  const { t } = useTranslation()
   const { data: comments = [], isLoading } = useTicketComments(ticketId)
   const createComment = useCreateComment(ticketId)
   const deleteComment = useDeleteComment(ticketId)
@@ -27,7 +29,9 @@ export function TicketComments({ ticketId }: TicketCommentsProps) {
 
   return (
     <div className="flex flex-col gap-4">
-      <h3 className="text-sm font-medium">Comments ({comments.length})</h3>
+      <h3 className="text-sm font-medium">
+        {t('comments.titleWithCount', { count: comments.length })}
+      </h3>
 
       {/* New comment */}
       <div className="flex gap-3">
@@ -38,7 +42,7 @@ export function TicketComments({ ticketId }: TicketCommentsProps) {
         </Avatar>
         <div className="flex flex-1 flex-col gap-2">
           <Textarea
-            placeholder="Add a comment…"
+            placeholder={t('comments.placeholder')}
             value={draft}
             onChange={(e) => setDraft(e.target.value)}
             onKeyDown={(e) => {
@@ -47,13 +51,13 @@ export function TicketComments({ ticketId }: TicketCommentsProps) {
             className="min-h-[80px] resize-none"
           />
           <div className="flex items-center justify-between">
-            <p className="text-xs text-muted-foreground">⌘ + Enter to submit</p>
+            <p className="text-xs text-muted-foreground">{t('comments.hint')}</p>
             <Button
               size="sm"
               onClick={handleSubmit}
               disabled={!draft.trim() || createComment.isPending}
             >
-              {createComment.isPending ? 'Posting…' : 'Comment'}
+              {createComment.isPending ? t('comments.posting') : t('comments.submit')}
             </Button>
           </div>
         </div>
@@ -73,7 +77,7 @@ export function TicketComments({ ticketId }: TicketCommentsProps) {
           ))}
         </div>
       ) : comments.length === 0 ? (
-        <p className="text-sm text-muted-foreground">No comments yet. Be the first!</p>
+        <p className="text-sm text-muted-foreground">{t('comments.empty')}</p>
       ) : (
         <div className="flex flex-col gap-4">
           {comments.map((comment) => (
@@ -98,7 +102,7 @@ export function TicketComments({ ticketId }: TicketCommentsProps) {
                     <button
                       onClick={() => deleteComment.mutate(comment.id)}
                       className="rounded p-0.5 text-muted-foreground transition-colors hover:text-destructive"
-                      title="Delete comment"
+                      title={t('comments.delete')}
                     >
                       <Trash2 className="size-3.5" />
                     </button>

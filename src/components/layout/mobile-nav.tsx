@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { NavLink, Link } from 'react-router-dom'
 import { FolderKanban, LayoutDashboard, Menu, Search, TicketPlus, X } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
 import { useProjects } from '@/hooks/use-projects'
 import { useSavedSearches } from '@/hooks/use-saved-searches'
@@ -10,6 +11,7 @@ import { UserNav } from './user-nav'
 export function MobileNav() {
   const { data: projects = [] } = useProjects()
   const { data: searches = [] } = useSavedSearches()
+  const { t } = useTranslation()
   const [menuOpen, setMenuOpen] = useState(false)
   const [ticketOpen, setTicketOpen] = useState(false)
 
@@ -35,7 +37,7 @@ export function MobileNav() {
           <div className="absolute inset-0 bg-black/50" onClick={() => setMenuOpen(false)} />
           <aside className="absolute left-0 top-0 flex h-full w-72 flex-col bg-sidebar">
             <div className="flex h-12 items-center justify-between border-b px-4">
-              <span className="font-heading text-sm font-semibold">Menu</span>
+              <span className="font-heading text-sm font-semibold">{t('nav.menu')}</span>
               <button
                 onClick={() => setMenuOpen(false)}
                 className="rounded-md p-1 text-muted-foreground hover:bg-sidebar-accent"
@@ -47,7 +49,7 @@ export function MobileNav() {
             <div className="flex flex-1 flex-col gap-1 overflow-y-auto p-2">
               {/* Projects */}
               <div className="px-2 py-1 text-xs font-medium uppercase tracking-wider text-muted-foreground">
-                Projects
+                {t('projects.title')}
               </div>
               {projects.map((p) => (
                 <NavLink
@@ -71,7 +73,7 @@ export function MobileNav() {
               {searches.length > 0 && (
                 <>
                   <div className="mt-2 px-2 py-1 text-xs font-medium uppercase tracking-wider text-muted-foreground">
-                    Searches
+                    {t('search.searches')}
                   </div>
                   {searches.map((s) => (
                     <NavLink
@@ -114,7 +116,7 @@ export function MobileNav() {
           }
         >
           <LayoutDashboard className="size-5" />
-          Home
+          {t('nav.home')}
         </NavLink>
 
         <button
@@ -122,7 +124,7 @@ export function MobileNav() {
           className="flex flex-col items-center gap-0.5 rounded-md px-4 py-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors"
         >
           <TicketPlus className="size-5" />
-          New
+          {t('nav.new')}
         </button>
 
         <NavLink
@@ -135,7 +137,7 @@ export function MobileNav() {
           }
         >
           <Search className="size-5" />
-          Search
+          {t('nav.search')}
         </NavLink>
       </nav>
 

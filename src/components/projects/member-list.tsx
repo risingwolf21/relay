@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { UserPlus, UserMinus } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { useAuth } from '@/contexts/auth-context'
 import {
   useProjectMembers,
@@ -36,6 +37,7 @@ interface MemberListProps {
 
 export function MemberList({ projectId, currentUserRole }: MemberListProps) {
   const { user } = useAuth()
+  const { t } = useTranslation()
   const { data: members = [], isLoading } = useProjectMembers(projectId)
   const inviteMember = useInviteMember(projectId)
   const updateRole = useUpdateMemberRole(projectId)
@@ -54,13 +56,13 @@ export function MemberList({ projectId, currentUserRole }: MemberListProps) {
   }
 
   if (isLoading) {
-    return <div className="py-8 text-center text-sm text-muted-foreground">Loading members…</div>
+    return <div className="py-8 text-center text-sm text-muted-foreground">{t('members.loading')}</div>
   }
 
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between">
-        <h2 className="text-sm font-medium">Members ({members.length})</h2>
+        <h2 className="text-sm font-medium">{t('members.titleWithCount', { count: members.length })}</h2>
       </div>
 
       <div className="divide-y rounded-xl border">
@@ -77,7 +79,7 @@ export function MemberList({ projectId, currentUserRole }: MemberListProps) {
               <div className="min-w-0 flex-1">
                 <p className="truncate text-sm font-medium">
                   {member.profile?.full_name || member.profile?.email}
-                  {isSelf && <span className="ml-1 text-xs text-muted-foreground">(you)</span>}
+                  {isSelf && <span className="ml-1 text-xs text-muted-foreground">{t('members.you')}</span>}
                 </p>
                 <p className="truncate text-xs text-muted-foreground">{member.profile?.email}</p>
               </div>
@@ -94,14 +96,14 @@ export function MemberList({ projectId, currentUserRole }: MemberListProps) {
                   <SelectContent>
                     {ROLES.map((r) => (
                       <SelectItem key={r} value={r}>
-                        {r.charAt(0).toUpperCase() + r.slice(1)}
+                        {t(`roles.${r}`)}
                       </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
               ) : (
                 <Badge variant={roleBadgeVariant[member.role]}>
-                  {member.role}
+                  {t(`roles.${member.role}`)}
                 </Badge>
               )}
               {isAdmin && !isSelf && (
@@ -115,7 +117,7 @@ export function MemberList({ projectId, currentUserRole }: MemberListProps) {
                       onClick={() => removeMember.mutate(member.user_id)}
                     >
                       <UserMinus className="size-4" />
-                      Remove member
+                      {t('members.remove')}
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
@@ -127,10 +129,10 @@ export function MemberList({ projectId, currentUserRole }: MemberListProps) {
 
       {isAdmin && (
         <div className="rounded-xl border p-4">
-          <h3 className="mb-3 text-sm font-medium">Invite a member</h3>
+          <h3 className="mb-3 text-sm font-medium">{t('members.inviteTitle')}</h3>
           <div className="flex gap-2">
             <Input
-              placeholder="user@example.com"
+              placeholder={t('members.emailPlaceholder')}
               type="email"
               value={inviteEmail}
               onChange={(e) => setInviteEmail(e.target.value)}
@@ -144,14 +146,14 @@ export function MemberList({ projectId, currentUserRole }: MemberListProps) {
               <SelectContent>
                 {ROLES.map((r) => (
                   <SelectItem key={r} value={r}>
-                    {r.charAt(0).toUpperCase() + r.slice(1)}
+                    {t(`roles.${r}`)}
                   </SelectItem>
                 ))}
               </SelectContent>
             </Select>
             <Button onClick={handleInvite} disabled={!inviteEmail.trim() || inviteMember.isPending}>
               <UserPlus className="size-4" />
-              Invite
+              {t('members.invite')}
             </Button>
           </div>
         </div>

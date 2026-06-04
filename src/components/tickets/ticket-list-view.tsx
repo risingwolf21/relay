@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Plus } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { useTickets } from '@/hooks/use-tickets'
 import type { MemberWithProfile } from '@/hooks/use-members'
 import type { Ticket, ProjectRole } from '@/types/database'
@@ -16,34 +17,37 @@ interface TicketListViewProps {
 
 export function TicketListView({ projectId, members, userRole }: TicketListViewProps) {
   const { data: tickets = [], isLoading } = useTickets(projectId)
+  const { t } = useTranslation()
   const [createOpen, setCreateOpen] = useState(false)
   const [selectedTicket, setSelectedTicket] = useState<Ticket | null>(null)
 
   const canCreate = userRole === 'admin' || userRole === 'editor'
 
   if (isLoading) {
-    return <div className="py-12 text-center text-sm text-muted-foreground">Loading tickets…</div>
+    return <div className="py-12 text-center text-sm text-muted-foreground">{t('tickets.loading')}</div>
   }
 
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between">
-        <p className="text-sm text-muted-foreground">{tickets.length} ticket{tickets.length !== 1 ? 's' : ''}</p>
+        <p className="text-sm text-muted-foreground">
+          {t('tickets.count', { count: tickets.length })}
+        </p>
         {canCreate && (
           <Button size="sm" onClick={() => setCreateOpen(true)}>
             <Plus className="size-4" />
-            New ticket
+            {t('tickets.new')}
           </Button>
         )}
       </div>
 
       {tickets.length === 0 ? (
         <div className="rounded-xl border py-16 text-center">
-          <p className="text-sm text-muted-foreground">No tickets yet</p>
+          <p className="text-sm text-muted-foreground">{t('tickets.noTickets')}</p>
           {canCreate && (
             <Button size="sm" variant="outline" className="mt-3" onClick={() => setCreateOpen(true)}>
               <Plus className="size-4" />
-              Create your first ticket
+              {t('tickets.createFirstTicket')}
             </Button>
           )}
         </div>

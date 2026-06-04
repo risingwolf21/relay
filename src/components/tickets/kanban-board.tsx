@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import {
   DndContext,
   DragOverlay,
@@ -25,6 +26,7 @@ interface KanbanBoardProps {
 }
 
 export function KanbanBoard({ projectId, members, userRole }: KanbanBoardProps) {
+  const { t } = useTranslation()
   const { data: serverTickets = [], isLoading } = useTickets(projectId)
   const reorderTickets = useReorderTickets(projectId)
 
@@ -32,7 +34,6 @@ export function KanbanBoard({ projectId, members, userRole }: KanbanBoardProps) 
   const [activeTicket, setActiveTicket] = useState<Ticket | null>(null)
   const [isDragging, setIsDragging] = useState(false)
 
-  // Sync server state when not dragging
   useEffect(() => {
     if (!isDragging) {
       setLocalTickets(serverTickets)
@@ -57,20 +58,14 @@ export function KanbanBoard({ projectId, members, userRole }: KanbanBoardProps) 
 
   function onDragOver({ active, over }: DragOverEvent) {
     if (!over) return
-
     const activeId = active.id as string
     const overId = over.id as string
-
     const activeTicket = localTickets.find((t) => t.id === activeId)
     if (!activeTicket) return
-
-    // Determine target status: either the column droppable id or the ticket's column
     const targetStatus = (TICKET_STATUSES.includes(overId as TicketStatus)
       ? overId
       : localTickets.find((t) => t.id === overId)?.status) as TicketStatus | undefined
-
     if (!targetStatus || activeTicket.status === targetStatus) return
-
     setLocalTickets((prev) =>
       prev.map((t) => (t.id === activeId ? { ...t, status: targetStatus } : t)),
     )
@@ -79,50 +74,34 @@ export function KanbanBoard({ projectId, members, userRole }: KanbanBoardProps) 
   function onDragEnd({ active, over }: DragEndEvent) {
     setIsDragging(false)
     setActiveTicket(null)
-
     if (!over) return
-
     const activeId = active.id as string
     const overId = over.id as string
-
-    // Determine final column status
     const activeTicket = localTickets.find((t) => t.id === activeId)
     if (!activeTicket) return
-
     const targetStatus = (TICKET_STATUSES.includes(overId as TicketStatus)
       ? overId
       : localTickets.find((t) => t.id === overId)?.status ?? activeTicket.status) as TicketStatus
-
-    // Get final ordering within the target column
     const columnTickets = localTickets
       .filter((t) => t.status === targetStatus)
       .sort((a, b) => a.position - b.position)
-
     const oldIndex = columnTickets.findIndex((t) => t.id === activeId)
     const newIndex = TICKET_STATUSES.includes(overId as TicketStatus)
       ? columnTickets.length - 1
       : columnTickets.findIndex((t) => t.id === overId)
-
     let reordered = columnTickets
     if (oldIndex !== -1 && newIndex !== -1 && oldIndex !== newIndex) {
       reordered = arrayMove(columnTickets, oldIndex, newIndex)
     }
-
     const withPositions = reordered.map((t, i) => ({ ...t, position: i }))
-
-    // Update local state
     setLocalTickets((prev) => [
       ...prev.filter((t) => t.status !== targetStatus),
       ...withPositions,
     ])
-
-    // Find tickets that changed vs server state
     const changed = withPositions.filter((t) => {
       const server = serverTickets.find((s) => s.id === t.id)
       return !server || server.status !== t.status || server.position !== t.position
     })
-
-    // Also include the active ticket if it changed status
     const originalActive = serverTickets.find((s) => s.id === activeId)
     if (originalActive && originalActive.status !== targetStatus) {
       const inChanged = changed.find((c) => c.id === activeId)
@@ -131,7 +110,6 @@ export function KanbanBoard({ projectId, members, userRole }: KanbanBoardProps) 
         if (finalPos) changed.push(finalPos)
       }
     }
-
     if (changed.length > 0) {
       reorderTickets.mutate(
         changed.map((t) => ({ id: t.id, status: t.status, position: t.position })),
@@ -140,7 +118,7 @@ export function KanbanBoard({ projectId, members, userRole }: KanbanBoardProps) 
   }
 
   if (isLoading) {
-    return <div className="py-12 text-center text-sm text-muted-foreground">Loading board…</div>
+    return <div className="py-12 text-center text-sm text-muted-foreground">{t('tickets.loadingBoard')}</div>
   }
 
   return (
