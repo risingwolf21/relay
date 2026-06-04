@@ -40,7 +40,7 @@ jobs:
         with:
           version: latest
       - name: Push unpublished migrations
-        run: supabase db push --db-url "${{ secrets.SUPABASE_CONNECTION_STRING }}"
+        run: supabase db push --db-url ${{ secrets.SUPABASE_CONNECTION_STRING }}
 
   build:
     name: "Build"
