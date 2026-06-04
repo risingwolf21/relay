@@ -41,8 +41,8 @@ jobs:
       - uses: supabase/setup-cli@v1
         with:
           version: latest
-      - name: Push unpublished migrations
-        run: supabase db push --db-url ${{ secrets.SUPABASE_CONNECTION_STRING }}
+      - name: Apply pending migrations
+        run: supabase migration up --db-url ${{ secrets.SUPABASE_CONNECTION_STRING }}
 
   build:
     name: "Build"
