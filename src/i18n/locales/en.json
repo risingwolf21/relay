@@ -104,7 +104,21 @@
     "dropTicketsHere": "Drop tickets here",
     "loadingBoard": "Loading board…",
     "addTicketTo": "Add ticket to {{status}}",
-    "priority_label": "{{priority}} priority"
+    "priority_label": "{{priority}} priority",
+    "dueDate": "Due date",
+    "noDueDate": "No due date",
+    "overdue": "Overdue",
+    "dueToday": "Due today",
+    "recurrence": "Recurrence",
+    "recurrenceLabel": "Recurring",
+    "noRecurrence": "Not recurring",
+    "createNextRecurrence": "Create next recurrence",
+    "parentTicket": "Previous recurrence",
+    "recurrenceFrequency": "Frequency",
+    "recurrence_daily": "Daily",
+    "recurrence_weekly": "Weekly",
+    "recurrence_biweekly": "Biweekly",
+    "recurrence_monthly": "Monthly"
   },
   "status": {
     "backlog": "Backlog",

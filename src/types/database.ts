@@ -72,6 +72,8 @@ export type SavedSearchRow = {
   updated_at: string
 }
 
+export type RecurrenceFrequency = 'daily' | 'weekly' | 'biweekly' | 'monthly'
+
 export type TicketRow = {
   id: string
   project_id: string
@@ -82,6 +84,9 @@ export type TicketRow = {
   assignee_id: string | null
   created_by: string
   position: number
+  due_date: string | null
+  recurrence_frequency: RecurrenceFrequency | null
+  parent_ticket_id: string | null
   created_at: string
   updated_at: string
 }
@@ -195,6 +200,9 @@ export type Database = {
           assignee_id?: string | null
           created_by: string
           position?: number
+          due_date?: string | null
+          recurrence_frequency?: RecurrenceFrequency | null
+          parent_ticket_id?: string | null
           created_at?: string
           updated_at?: string
         }
@@ -205,6 +213,9 @@ export type Database = {
           priority?: TicketPriority
           assignee_id?: string | null
           position?: number
+          due_date?: string | null
+          recurrence_frequency?: RecurrenceFrequency | null
+          parent_ticket_id?: string | null
           updated_at?: string
         }
         Relationships: {
