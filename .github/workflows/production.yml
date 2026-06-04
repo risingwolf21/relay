@@ -69,7 +69,7 @@ jobs:
         run: npm run build
         env:
           NODE_OPTIONS: "--max-old-space-size=4096"
-          VITE_SUPABASE_URL: ${{ vars.SUPABASE_DB_URL }}
+          VITE_SUPABASE_URL: ${{ secrets.SUPABASE_DB_URL }}
           VITE_SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
           VITE_GIT_COMMIT: ${{ needs.prepare.outputs.short_sha }}
           VITE_ENV: "production"
