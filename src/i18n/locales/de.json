@@ -129,7 +129,9 @@
     "noLabels": "Keine Labels",
     "createLabel": "Label erstellen",
     "labelName": "Label-Name",
-    "labelColor": "Farbe"
+    "labelColor": "Farbe",
+    "clearDate": "Datum löschen",
+    "addDescription": "Beschreibung hinzufügen…"
   },
   "status": {
     "backlog": "Rückstand",

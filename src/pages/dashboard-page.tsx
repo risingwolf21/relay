@@ -5,7 +5,6 @@ import {
   Calendar,
   CheckCircle2,
   Layers,
-  LayoutList,
   User,
   Zap,
 } from 'lucide-react'
@@ -16,7 +15,6 @@ import { useProjects } from '@/hooks/use-projects'
 import { useDashboardActivity } from '@/hooks/use-ticket-activity'
 import { CreateProjectDialog } from '@/components/projects/create-project-dialog'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 import {
@@ -376,7 +374,6 @@ function FocusDashboard({
 
   const open = allTickets.filter((t) => OPEN_STATUSES.has(t.status))
   const mine = sortByPriority(open.filter((t) => t.assignee_id === userId))
-  const overdue = open.filter((t) => t.due_date && new Date(t.due_date) < new Date())
   const dueList = open
     .filter((t) => t.due_date)
     .sort((a, b) => new Date(a.due_date!).getTime() - new Date(b.due_date!).getTime())

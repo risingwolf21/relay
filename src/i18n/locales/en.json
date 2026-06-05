@@ -129,7 +129,9 @@
     "noLabels": "No labels",
     "createLabel": "Create label",
     "labelName": "Label name",
-    "labelColor": "Color"
+    "labelColor": "Color",
+    "clearDate": "Clear date",
+    "addDescription": "Add a description…"
   },
   "status": {
     "backlog": "Backlog",
