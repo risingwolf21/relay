@@ -10,6 +10,8 @@ import type { Ticket, ProjectRole, RecurrenceFrequency } from '@/types/database'
 import { TicketForm, type TicketFormValues } from './ticket-form'
 import { TicketComments } from './ticket-comments'
 import { TicketActivityFeed } from './ticket-activity-feed'
+import { TicketSubtasks } from './ticket-subtasks'
+import { LabelSelector } from './label-selector'
 import {
   Sheet,
   SheetContent,
@@ -221,7 +223,9 @@ export function TicketDetailSheet({
                 {parentTicket && (
                   <div>
                     <p className="mb-1 text-xs font-medium uppercase tracking-wider text-muted-foreground">
-                      {t('tickets.parentTicket')}
+                      {ticket.recurrence_frequency
+                        ? t('tickets.previousRecurrence')
+                        : t('tickets.parentTicket')}
                     </p>
                     <Link
                       to={`/projects/${parentTicket.project_id}/tickets/${parentTicket.id}`}
@@ -243,6 +247,36 @@ export function TicketDetailSheet({
               </div>
             )}
           </div>
+
+          {!editing && (
+            <>
+              <Separator />
+              <div className="py-4">
+                <p className="mb-2 text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                  {t('tickets.labels')}
+                </p>
+                <LabelSelector
+                  ticketId={ticket.id}
+                  projectId={ticket.project_id}
+                  ticketLabels={ticket.labels ?? []}
+                  canEdit={canEdit}
+                />
+              </div>
+            </>
+          )}
+
+          {!editing && (
+            <>
+              <Separator />
+              <div className="py-4">
+                <TicketSubtasks
+                  ticketId={ticket.id}
+                  projectId={ticket.project_id}
+                  canEdit={canEdit}
+                />
+              </div>
+            </>
+          )}
 
           {canEdit && !editing && ticket.recurrence_frequency && (
             <>

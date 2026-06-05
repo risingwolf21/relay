@@ -17,7 +17,7 @@ const RECURRENCE_FREQUENCIES: RecurrenceFrequency[] = ['daily', 'weekly', 'biwee
 const ticketSchema = z.object({
   title: z.string().min(1, 'Title is required').max(255),
   description: z.string().max(10000).optional(),
-  status: z.enum(['backlog', 'todo', 'in_progress', 'in_review', 'done']),
+  status: z.enum(['backlog', 'todo', 'in_progress', 'in_review', 'done', 'canceled']),
   priority: z.enum(['low', 'medium', 'high', 'urgent']),
   assignee_id: z.string().uuid().nullable().optional(),
   due_date: z.string().nullable().optional(),

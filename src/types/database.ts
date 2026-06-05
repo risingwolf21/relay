@@ -1,10 +1,7 @@
 export type ProjectRole = 'admin' | 'editor' | 'viewer'
-export type TicketStatus = 'backlog' | 'todo' | 'in_progress' | 'in_review' | 'done'
+export type TicketStatus = 'backlog' | 'todo' | 'in_progress' | 'in_review' | 'done' | 'canceled'
 export type TicketPriority = 'low' | 'medium' | 'high' | 'urgent'
 
-// ─────────────────────────────────────────────────────────────
-// Search filters (stored as JSONB in saved_searches.filters)
-// ─────────────────────────────────────────────────────────────
 export type SearchFilters = {
   project_ids: string[]
   statuses: TicketStatus[]
@@ -12,10 +9,6 @@ export type SearchFilters = {
   assignee_me: boolean
   text: string
 }
-
-// ─────────────────────────────────────────────────────────────
-// Raw DB row types (used inside the Database type — no joins)
-// ─────────────────────────────────────────────────────────────
 
 export type ProfileRow = {
   id: string
@@ -31,6 +24,8 @@ export type ProjectRow = {
   name: string
   description: string | null
   slug: string
+  key: string | null
+  ticket_counter: number
   created_by: string
   created_at: string
   updated_at: string
@@ -84,6 +79,7 @@ export type TicketRow = {
   assignee_id: string | null
   created_by: string
   position: number
+  number: number | null
   due_date: string | null
   recurrence_frequency: RecurrenceFrequency | null
   parent_ticket_id: string | null
@@ -91,12 +87,23 @@ export type TicketRow = {
   updated_at: string
 }
 
-// ─────────────────────────────────────────────────────────────
-// App-level types (may include joined relations)
-// ─────────────────────────────────────────────────────────────
+export type LabelRow = {
+  id: string
+  project_id: string
+  name: string
+  color: string
+  created_at: string
+}
+
+export type Label = LabelRow
+
+export type TicketLabelJoin = {
+  ticket_id: string
+  label_id: string
+  label: Label
+}
 
 export type Profile = ProfileRow
-
 export type Project = ProjectRow
 
 export type ProjectMember = ProjectMemberRow & {
@@ -105,16 +112,12 @@ export type ProjectMember = ProjectMemberRow & {
 
 export type Ticket = TicketRow & {
   assignee?: Profile | null
-  creator?: Profile | null
+  labels?: TicketLabelJoin[]
 }
 
 export type TicketComment = TicketCommentRow & { author?: Profile }
 export type TicketActivity = TicketActivityRow & { actor?: Profile | null }
 export type SavedSearch = SavedSearchRow
-
-// ─────────────────────────────────────────────────────────────
-// Supabase Database type — matches the shape expected by createClient<Database>
-// ─────────────────────────────────────────────────────────────
 
 export type Database = {
   public: {
@@ -150,6 +153,8 @@ export type Database = {
           name: string
           description?: string | null
           slug: string
+          key?: string | null
+          ticket_counter?: number
           created_by: string
           created_at?: string
           updated_at?: string
@@ -158,6 +163,7 @@ export type Database = {
           name?: string
           description?: string | null
           slug?: string
+          key?: string | null
           updated_at?: string
         }
         Relationships: {
@@ -200,6 +206,7 @@ export type Database = {
           assignee_id?: string | null
           created_by: string
           position?: number
+          number?: number | null
           due_date?: string | null
           recurrence_frequency?: RecurrenceFrequency | null
           parent_ticket_id?: string | null
@@ -218,6 +225,39 @@ export type Database = {
           parent_ticket_id?: string | null
           updated_at?: string
         }
+        Relationships: {
+          foreignKeyName: string
+          columns: string[]
+          isOneToOne?: boolean
+          referencedRelation: string
+          referencedColumns: string[]
+        }[]
+      }
+      labels: {
+        Row: LabelRow
+        Insert: {
+          id?: string
+          project_id: string
+          name: string
+          color?: string
+          created_at?: string
+        }
+        Update: {
+          name?: string
+          color?: string
+        }
+        Relationships: {
+          foreignKeyName: string
+          columns: string[]
+          isOneToOne?: boolean
+          referencedRelation: string
+          referencedColumns: string[]
+        }[]
+      }
+      ticket_labels: {
+        Row: { ticket_id: string; label_id: string }
+        Insert: { ticket_id: string; label_id: string }
+        Update: Record<string, never>
         Relationships: {
           foreignKeyName: string
           columns: string[]

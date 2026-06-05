@@ -10,7 +10,7 @@ export function useTickets(projectId: string) {
     queryFn: async (): Promise<Ticket[]> => {
       const { data, error } = await supabase
         .from('tickets')
-        .select('*, assignee:profiles!tickets_assignee_id_fkey(*)')
+        .select('*, assignee:profiles!tickets_assignee_id_fkey(*), labels:ticket_labels(label_id, label:labels(*))')
         .eq('project_id', projectId)
         .order('status')
         .order('position')
@@ -53,13 +53,16 @@ export function useCreateTicket() {
       const { data, error } = await supabase
         .from('tickets')
         .insert({ ...input, created_by: user!.id, position })
-        .select('*, assignee:profiles!tickets_assignee_id_fkey(*)')
+        .select('*, assignee:profiles!tickets_assignee_id_fkey(*), labels:ticket_labels(label_id, label:labels(*))')
         .single()
       if (error) throw error
       return data as unknown as Ticket
     },
-    onSuccess: (ticket) => {
+    onSuccess: (ticket, input) => {
       queryClient.invalidateQueries({ queryKey: ['tickets', ticket.project_id] })
+      if (input.parent_ticket_id) {
+        queryClient.invalidateQueries({ queryKey: ['sub-tickets', input.parent_ticket_id] })
+      }
       toast.success('Ticket created')
     },
     onError: (error: Error) => {
@@ -91,13 +94,17 @@ export function useUpdateTicket() {
         .from('tickets')
         .update(updates)
         .eq('id', id)
-        .select('*, assignee:profiles!tickets_assignee_id_fkey(*)')
+        .select('*, assignee:profiles!tickets_assignee_id_fkey(*), labels:ticket_labels(label_id, label:labels(*))')
         .single()
       if (error) throw error
       return data as unknown as Ticket
     },
     onSuccess: (ticket) => {
       queryClient.invalidateQueries({ queryKey: ['tickets', ticket.project_id] })
+      queryClient.invalidateQueries({ queryKey: ['ticket', ticket.id] })
+      if (ticket.parent_ticket_id) {
+        queryClient.invalidateQueries({ queryKey: ['sub-tickets', ticket.parent_ticket_id] })
+      }
     },
     onError: (error: Error) => {
       toast.error(error.message)
@@ -121,6 +128,37 @@ export function useDeleteTicket() {
     onError: (error: Error) => {
       toast.error(error.message)
     },
+  })
+}
+
+export function useAllTickets() {
+  return useQuery({
+    queryKey: ['all-tickets'],
+    queryFn: async (): Promise<Ticket[]> => {
+      const { data, error } = await supabase
+        .from('tickets')
+        .select('*, assignee:profiles!tickets_assignee_id_fkey(*), labels:ticket_labels(label_id, label:labels(*))')
+        .order('updated_at', { ascending: false })
+      if (error) throw error
+      return (data ?? []) as unknown as Ticket[]
+    },
+  })
+}
+
+export function useSubTickets(ticketId: string) {
+  return useQuery({
+    queryKey: ['sub-tickets', ticketId],
+    queryFn: async (): Promise<Ticket[]> => {
+      const { data, error } = await supabase
+        .from('tickets')
+        .select('*, assignee:profiles!tickets_assignee_id_fkey(*), labels:ticket_labels(label_id, label:labels(*))')
+        .eq('parent_ticket_id', ticketId)
+        .is('recurrence_frequency', null)
+        .order('created_at')
+      if (error) throw error
+      return (data ?? []) as unknown as Ticket[]
+    },
+    enabled: !!ticketId,
   })
 }
 

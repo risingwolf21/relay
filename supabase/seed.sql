@@ -4,7 +4,7 @@ SET session_replication_role = replica;
 -- PostgreSQL database dump
 --
 
--- \restrict pvPPFyaZ6nOWhxW9Gefv55jt4HsnurlISQ5HmgjJrpU3nKJBiIKvHbWzsDOCq7P
+-- \restrict 2u8v9fuRY7DL0kDiaV8QU2UcnBoq61jnv7lem4OhPj460MIxSFhGbfsjren8ZJd
 
 -- Dumped from database version 17.6
 -- Dumped by pg_dump version 17.6
@@ -202,11 +202,11 @@ INSERT INTO "public"."saved_searches" ("id", "user_id", "name", "filters", "crea
 -- Data for Name: tickets; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO "public"."tickets" ("id", "project_id", "title", "description", "status", "priority", "assignee_id", "created_by", "position", "created_at", "updated_at") VALUES
-	('3801c903-3583-4f4a-b4ed-d7e1a6d5fbac', '01355b3d-8754-4168-b751-6e7966713389', 'Initial Ticket', 'Das ist das erste TIckets', 'backlog', 'medium', '980ee21b-c6fa-44f4-8e7b-23489e32bfa6', '980ee21b-c6fa-44f4-8e7b-23489e32bfa6', 0, '2026-06-04 10:32:57.166168+00', '2026-06-04 10:32:57.166168+00'),
+INSERT INTO "public"."tickets" ("id", "project_id", "title", "description", "status", "priority", "assignee_id", "created_by", "position", "created_at", "updated_at", "due_date", "recurrence_frequency", "parent_ticket_id") VALUES
+	('3801c903-3583-4f4a-b4ed-d7e1a6d5fbac', '01355b3d-8754-4168-b751-6e7966713389', 'Initial Ticket', 'Das ist das erste TIckets', 'backlog', 'medium', '980ee21b-c6fa-44f4-8e7b-23489e32bfa6', '980ee21b-c6fa-44f4-8e7b-23489e32bfa6', 0, '2026-06-04 10:32:57.166168+00', '2026-06-04 10:32:57.166168+00', NULL, NULL, NULL),
 	('a7f937b9-0a52-47a5-b7e1-b1a1b033d27c', '01355b3d-8754-4168-b751-6e7966713389', 'todo', 'regelmäßige aufgaben
 bis wann es erledigt sein muss
-wann zu letzt gemacht', 'todo', 'urgent', '980ee21b-c6fa-44f4-8e7b-23489e32bfa6', '980ee21b-c6fa-44f4-8e7b-23489e32bfa6', 0, '2026-06-04 10:39:12.814179+00', '2026-06-04 10:39:12.814179+00');
+wann zu letzt gemacht', 'todo', 'urgent', '980ee21b-c6fa-44f4-8e7b-23489e32bfa6', '980ee21b-c6fa-44f4-8e7b-23489e32bfa6', 0, '2026-06-04 10:39:12.814179+00', '2026-06-04 10:39:12.814179+00', NULL, NULL, NULL);
 
 
 --
@@ -302,6 +302,6 @@ SELECT pg_catalog.setval('"supabase_functions"."hooks_id_seq"', 1, false);
 -- PostgreSQL database dump complete
 --
 
--- \unrestrict pvPPFyaZ6nOWhxW9Gefv55jt4HsnurlISQ5HmgjJrpU3nKJBiIKvHbWzsDOCq7P
+-- \unrestrict 2u8v9fuRY7DL0kDiaV8QU2UcnBoq61jnv7lem4OhPj460MIxSFhGbfsjren8ZJd
 
 RESET ALL;
