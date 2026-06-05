@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { NavLink } from 'react-router-dom'
-import { FolderKanban, Plus, Search, TicketPlus } from 'lucide-react'
+import { FolderKanban, Inbox, Plus, Search, TicketPlus, User } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
 import { useProjects } from '@/hooks/use-projects'
@@ -28,6 +28,43 @@ export function Sidebar() {
 
       {/* Nav */}
       <div className="flex flex-1 flex-col gap-1 overflow-y-auto p-2">
+        {/* Views section */}
+        <div className="mb-1">
+          <div className="px-2 py-1">
+            <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+              {t('nav.views')}
+            </span>
+          </div>
+          <NavLink
+            to="/my-tickets"
+            className={({ isActive }) =>
+              cn(
+                'flex items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors',
+                isActive
+                  ? 'bg-sidebar-accent font-medium text-foreground'
+                  : 'text-sidebar-foreground hover:bg-sidebar-accent hover:text-foreground',
+              )
+            }
+          >
+            <User className="size-3.5 shrink-0 opacity-70" />
+            <span className="truncate">{t('nav.myTickets')}</span>
+          </NavLink>
+          <NavLink
+            to="/inbox"
+            className={({ isActive }) =>
+              cn(
+                'flex items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors',
+                isActive
+                  ? 'bg-sidebar-accent font-medium text-foreground'
+                  : 'text-sidebar-foreground hover:bg-sidebar-accent hover:text-foreground',
+              )
+            }
+          >
+            <Inbox className="size-3.5 shrink-0 opacity-70" />
+            <span className="truncate">{t('nav.inbox')}</span>
+          </NavLink>
+        </div>
+
         {/* Projects section */}
         <div className="flex items-center justify-between px-2 py-1">
           <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">

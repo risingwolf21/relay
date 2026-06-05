@@ -42,7 +42,10 @@
     "menu": "Menu",
     "dashboard": "Dashboard",
     "openFullPage": "Open full page",
-    "fullPage": "Full page"
+    "fullPage": "Full page",
+    "myTickets": "My Tickets",
+    "inbox": "Inbox",
+    "views": "Views"
   },
   "projects": {
     "title": "Projects",
@@ -88,6 +91,7 @@
     "status": "Status",
     "priority": "Priority",
     "assignee": "Assignee",
+    "reporter": "Reporter",
     "unassigned": "Unassigned",
     "saveChanges": "Save changes",
     "createTicket": "Create ticket",
@@ -119,14 +123,21 @@
     "recurrence_daily": "Daily",
     "recurrence_weekly": "Weekly",
     "recurrence_biweekly": "Biweekly",
-    "recurrence_monthly": "Monthly"
+    "recurrence_monthly": "Monthly",
+    "labels": "Labels",
+    "addLabel": "Add label",
+    "noLabels": "No labels",
+    "createLabel": "Create label",
+    "labelName": "Label name",
+    "labelColor": "Color"
   },
   "status": {
     "backlog": "Backlog",
     "todo": "To Do",
     "in_progress": "In Progress",
     "in_review": "In Review",
-    "done": "Done"
+    "done": "Done",
+    "canceled": "Canceled"
   },
   "priority": {
     "urgent": "Urgent",
@@ -202,6 +213,32 @@
     "list": "List",
     "members": "Members"
   },
+  "dashboard": {
+    "goodMorning": "Good morning",
+    "goodAfternoon": "Good afternoon",
+    "goodEvening": "Good evening",
+    "overview": "Overview",
+    "focus": "Focus",
+    "openTickets": "Open tickets",
+    "assignedToMe": "Assigned to me",
+    "dueThisWeek": "Due this week",
+    "completed": "Completed",
+    "inProgress": "in progress",
+    "highPriority": "high priority",
+    "allTime": "all time",
+    "myOpenTickets": "My open tickets",
+    "projectProgress": "Project progress",
+    "recentActivity": "Recent activity",
+    "assignedToYou": "Assigned to you",
+    "dueSoon": "Due soon",
+    "nothingAssigned": "Nothing assigned to you. Nice.",
+    "noUpcomingDueDates": "No upcoming due dates.",
+    "viewAllMyTickets": "View all my tickets",
+    "noActivity": "No recent activity.",
+    "summaryOpen": "{{open}} open tickets across {{count}} projects.",
+    "summaryFocus": "You have {{mine}} open tickets and {{overdue}} overdue.",
+    "viewAll": "View all"
+  },
   "subtasks": {
     "title": "Subtasks",
     "add": "Add subtask",
@@ -214,5 +251,30 @@
     "admin": "Admin",
     "editor": "Editor",
     "viewer": "Viewer"
+  },
+  "myTickets": {
+    "title": "My Tickets",
+    "subtitle": "All tickets assigned to you",
+    "empty": "No tickets assigned to you.",
+    "noOpenTickets": "No open tickets. Nice.",
+    "showClosed": "Show closed",
+    "hideClosed": "Hide closed"
+  },
+  "inbox": {
+    "title": "Inbox",
+    "subtitle": "Recent activity across your projects",
+    "empty": "Nothing new in your inbox.",
+    "allActivity": "All activity"
+  },
+  "labels": {
+    "title": "Labels",
+    "new": "New label",
+    "name": "Name",
+    "namePlaceholder": "e.g. bug, feature, docs",
+    "color": "Color",
+    "delete": "Delete label",
+    "noLabels": "No labels yet.",
+    "create": "Create label",
+    "creating": "Creating…"
   }
 }
