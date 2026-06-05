@@ -58,8 +58,11 @@ export function useCreateTicket() {
       if (error) throw error
       return data as unknown as Ticket
     },
-    onSuccess: (ticket) => {
+    onSuccess: (ticket, input) => {
       queryClient.invalidateQueries({ queryKey: ['tickets', ticket.project_id] })
+      if (input.parent_ticket_id) {
+        queryClient.invalidateQueries({ queryKey: ['sub-tickets', input.parent_ticket_id] })
+      }
       toast.success('Ticket created')
     },
     onError: (error: Error) => {
@@ -98,6 +101,10 @@ export function useUpdateTicket() {
     },
     onSuccess: (ticket) => {
       queryClient.invalidateQueries({ queryKey: ['tickets', ticket.project_id] })
+      queryClient.invalidateQueries({ queryKey: ['ticket', ticket.id] })
+      if (ticket.parent_ticket_id) {
+        queryClient.invalidateQueries({ queryKey: ['sub-tickets', ticket.parent_ticket_id] })
+      }
     },
     onError: (error: Error) => {
       toast.error(error.message)
@@ -121,6 +128,23 @@ export function useDeleteTicket() {
     onError: (error: Error) => {
       toast.error(error.message)
     },
+  })
+}
+
+export function useSubTickets(ticketId: string) {
+  return useQuery({
+    queryKey: ['sub-tickets', ticketId],
+    queryFn: async (): Promise<Ticket[]> => {
+      const { data, error } = await supabase
+        .from('tickets')
+        .select('*, assignee:profiles!tickets_assignee_id_fkey(*)')
+        .eq('parent_ticket_id', ticketId)
+        .is('recurrence_frequency', null)
+        .order('created_at')
+      if (error) throw error
+      return (data ?? []) as unknown as Ticket[]
+    },
+    enabled: !!ticketId,
   })
 }
 
