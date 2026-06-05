@@ -113,7 +113,8 @@
     "recurrenceLabel": "Wiederkehrend",
     "noRecurrence": "Nicht wiederkehrend",
     "createNextRecurrence": "Nächste Wiederholung erstellen",
-    "parentTicket": "Vorherige Wiederholung",
+    "parentTicket": "Übergeordnetes Ticket",
+    "previousRecurrence": "Vorherige Wiederholung",
     "recurrenceFrequency": "Häufigkeit",
     "recurrence_daily": "Täglich",
     "recurrence_weekly": "Wöchentlich",
@@ -200,6 +201,14 @@
     "board": "Board",
     "list": "Liste",
     "members": "Mitglieder"
+  },
+  "subtasks": {
+    "title": "Unteraufgaben",
+    "add": "Unteraufgabe hinzufügen",
+    "addFirst": "Unteraufgabe hinzufügen",
+    "titlePlaceholder": "Titel der Unteraufgabe…",
+    "markComplete": "Als erledigt markieren",
+    "markIncomplete": "Als unerledigt markieren"
   },
   "roles": {
     "admin": "Admin",

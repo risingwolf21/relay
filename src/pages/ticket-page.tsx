@@ -5,6 +5,7 @@ import { useQuery } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
 import { supabase } from '@/lib/supabase'
 import { useUpdateTicket, useDeleteTicket, useCreateTicket } from '@/hooks/use-tickets'
+import { TicketSubtasks } from '@/components/tickets/ticket-subtasks'
 import { useProjectMembers } from '@/hooks/use-members'
 import { useAuth } from '@/contexts/auth-context'
 import { TicketForm, type TicketFormValues } from '@/components/tickets/ticket-form'
@@ -252,7 +253,9 @@ export function TicketPage() {
           {parentTicket && (
             <div>
               <p className="mb-1 text-xs font-medium uppercase tracking-wider text-muted-foreground">
-                {t('tickets.parentTicket')}
+                {ticket.recurrence_frequency
+                  ? t('tickets.previousRecurrence')
+                  : t('tickets.parentTicket')}
               </p>
               <Link
                 to={`/projects/${parentTicket.project_id}/tickets/${parentTicket.id}`}
@@ -273,6 +276,10 @@ export function TicketPage() {
           )}
         </div>
       )}
+
+      <Separator />
+
+      <TicketSubtasks ticketId={ticket.id} projectId={projectId!} canEdit={canEdit} />
 
       {canEdit && !editing && ticket.recurrence_frequency && (
         <>
