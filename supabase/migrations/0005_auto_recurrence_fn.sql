@@ -1,3 +1,8 @@
+create extension if not exists pg_cron with schema pg_catalog;
+
+grant usage on schema cron to postgres; 
+grant all privileges on all tables in schema cron to postgres;
+
 -- Returns the number of new tickets created.
 -- Called daily by pg_cron (job: create-pending-recurrences).
 -- Finds every recurring ticket that is past due and has no child yet,
@@ -59,14 +64,13 @@ $$;
 -- Unschedule first so re-running the migration is idempotent.
 do $$
 begin
-  if exists (select 1 from cron.job where jobname = 'create-pending-recurrences') then
-    perform cron.unschedule('create-pending-recurrences');
-  end if;
-end;
-$$;
+  perform cron.unschedule('create-pending-recurrences');
+exception when others then
+  null;  -- not scheduled yet
+end $$;
 
 select cron.schedule(
   'create-pending-recurrences',
-  '0 6 * * *',
+  '0 4 * * *',
   $$select public.create_pending_recurrences()$$
 );
