@@ -26,6 +26,7 @@ export interface StatusConfig {
   label: string
   className: string
   dotClassName: string
+  color: string
 }
 
 export const priorityConfig: Record<TicketPriority, PriorityConfig> = {
@@ -56,27 +57,57 @@ export const statusConfig: Record<TicketStatus, StatusConfig> = {
     label: 'Backlog',
     className: 'bg-muted text-muted-foreground border-border',
     dotClassName: 'bg-muted-foreground',
+    color: '#a1a1aa',
   },
   todo: {
     label: 'To Do',
     className: 'bg-blue-500/10 text-blue-600 border-blue-500/20 dark:text-blue-400',
     dotClassName: 'bg-blue-500',
+    color: '#64748b',
   },
   in_progress: {
     label: 'In Progress',
     className: 'bg-violet-500/10 text-violet-600 border-violet-500/20 dark:text-violet-400',
     dotClassName: 'bg-violet-500',
+    color: '#d97706',
   },
   in_review: {
     label: 'In Review',
     className: 'bg-amber-500/10 text-amber-600 border-amber-500/20 dark:text-amber-400',
     dotClassName: 'bg-amber-500',
+    color: '#7c3aed',
   },
   done: {
     label: 'Done',
     className: 'bg-green-500/10 text-green-600 border-green-500/20 dark:text-green-400',
     dotClassName: 'bg-green-500',
+    color: '#16a34a',
   },
+}
+
+export const PRIORITY_RANK: Record<TicketPriority, number> = {
+  urgent: 4,
+  high: 3,
+  medium: 2,
+  low: 1,
+}
+
+export const OPEN_STATUSES = new Set<TicketStatus>(['backlog', 'todo', 'in_progress', 'in_review'])
+
+export function timeAgo(dateString: string): string {
+  const diff = Date.now() - new Date(dateString).getTime()
+  const m = Math.floor(diff / 60_000)
+  if (m < 1) return 'just now'
+  if (m < 60) return `${m}m ago`
+  const h = Math.floor(m / 60)
+  if (h < 24) return `${h}h ago`
+  const d = Math.floor(h / 24)
+  if (d < 7) return `${d}d ago`
+  const w = Math.floor(d / 7)
+  if (w < 5) return `${w}w ago`
+  const mo = Math.floor(d / 30)
+  if (mo < 12) return `${mo}mo ago`
+  return `${Math.floor(mo / 12)}y ago`
 }
 
 export function getInitials(name: string | null | undefined, email: string): string {

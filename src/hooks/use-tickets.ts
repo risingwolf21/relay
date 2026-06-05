@@ -131,6 +131,20 @@ export function useDeleteTicket() {
   })
 }
 
+export function useAllTickets() {
+  return useQuery({
+    queryKey: ['all-tickets'],
+    queryFn: async (): Promise<Ticket[]> => {
+      const { data, error } = await supabase
+        .from('tickets')
+        .select('*, assignee:profiles!tickets_assignee_id_fkey(*)')
+        .order('updated_at', { ascending: false })
+      if (error) throw error
+      return (data ?? []) as unknown as Ticket[]
+    },
+  })
+}
+
 export function useSubTickets(ticketId: string) {
   return useQuery({
     queryKey: ['sub-tickets', ticketId],
