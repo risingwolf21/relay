@@ -113,7 +113,8 @@
     "recurrenceLabel": "Recurring",
     "noRecurrence": "Not recurring",
     "createNextRecurrence": "Create next recurrence",
-    "parentTicket": "Previous recurrence",
+    "parentTicket": "Parent ticket",
+    "previousRecurrence": "Previous recurrence",
     "recurrenceFrequency": "Frequency",
     "recurrence_daily": "Daily",
     "recurrence_weekly": "Weekly",
@@ -200,6 +201,14 @@
     "board": "Board",
     "list": "List",
     "members": "Members"
+  },
+  "subtasks": {
+    "title": "Subtasks",
+    "add": "Add subtask",
+    "addFirst": "Add a subtask",
+    "titlePlaceholder": "Subtask title…",
+    "markComplete": "Mark complete",
+    "markIncomplete": "Mark incomplete"
   },
   "roles": {
     "admin": "Admin",
