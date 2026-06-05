@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { NavLink, Link } from 'react-router-dom'
-import { FolderKanban, LayoutDashboard, Menu, Search, TicketPlus, X } from 'lucide-react'
+import { FolderKanban, Inbox, LayoutDashboard, Menu, Search, TicketPlus, User, X } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
 import { useProjects } from '@/hooks/use-projects'
@@ -128,7 +128,7 @@ export function MobileNav() {
         </button>
 
         <NavLink
-          to={searches[0] ? `/searches/${searches[0].id}` : '/dashboard'}
+          to="/my-tickets"
           className={({ isActive }) =>
             cn(
               'flex flex-col items-center gap-0.5 rounded-md px-4 py-1.5 text-xs transition-colors',
@@ -136,8 +136,21 @@ export function MobileNav() {
             )
           }
         >
-          <Search className="size-5" />
-          {t('nav.search')}
+          <User className="size-5" />
+          {t('nav.myTickets')}
+        </NavLink>
+
+        <NavLink
+          to="/inbox"
+          className={({ isActive }) =>
+            cn(
+              'flex flex-col items-center gap-0.5 rounded-md px-4 py-1.5 text-xs transition-colors',
+              isActive ? 'text-foreground' : 'text-muted-foreground hover:text-foreground',
+            )
+          }
+        >
+          <Inbox className="size-5" />
+          {t('nav.inbox')}
         </NavLink>
       </nav>
 

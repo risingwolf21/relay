@@ -4,6 +4,7 @@ import {
   ArrowUp,
   Circle,
   Minus,
+  XCircle,
 } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 import type { TicketPriority, TicketStatus } from '@/types/database'
@@ -14,6 +15,7 @@ export const TICKET_STATUSES: TicketStatus[] = [
   'in_progress',
   'in_review',
   'done',
+  'canceled',
 ]
 
 export interface PriorityConfig {
@@ -83,6 +85,12 @@ export const statusConfig: Record<TicketStatus, StatusConfig> = {
     dotClassName: 'bg-green-500',
     color: '#16a34a',
   },
+  canceled: {
+    label: 'Canceled',
+    className: 'bg-muted text-muted-foreground/60 border-border line-through',
+    dotClassName: 'bg-muted-foreground/40',
+    color: '#d4d4d8',
+  },
 }
 
 export const PRIORITY_RANK: Record<TicketPriority, number> = {
@@ -93,6 +101,7 @@ export const PRIORITY_RANK: Record<TicketPriority, number> = {
 }
 
 export const OPEN_STATUSES = new Set<TicketStatus>(['backlog', 'todo', 'in_progress', 'in_review'])
+export const CLOSED_STATUSES = new Set<TicketStatus>(['done', 'canceled'])
 
 export function timeAgo(dateString: string): string {
   const diff = Date.now() - new Date(dateString).getTime()
@@ -136,4 +145,18 @@ export function formatDate(dateString: string): string {
   )
 }
 
+export function avatarGradient(userId: string): { background: string; color: string } {
+  let hash = 0
+  for (let i = 0; i < userId.length; i++) {
+    hash = ((hash << 5) - hash) + userId.charCodeAt(i)
+    hash = hash & hash
+  }
+  const hue = Math.abs(hash) % 360
+  return {
+    background: `oklch(0.65 0.15 ${hue})`,
+    color: 'white',
+  }
+}
+
 export const circleIcon = Circle
+export const canceledIcon = XCircle

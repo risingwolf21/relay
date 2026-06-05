@@ -10,7 +10,8 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
-import { priorityConfig, statusConfig, formatDate, getInitials } from '@/lib/ticket-utils'
+import { priorityConfig, statusConfig, timeAgo, getInitials } from '@/lib/ticket-utils'
+import { LabelChip } from './label-chip'
 import { useDeleteTicket } from '@/hooks/use-tickets'
 
 interface TicketRowProps {
@@ -27,7 +28,7 @@ export function TicketRow({ ticket, userRole, onClick }: TicketRowProps) {
 
   return (
     <div
-      className="group flex cursor-pointer items-center gap-3 border-b px-4 py-3 transition-colors last:border-0 hover:bg-muted/40"
+      className="group flex cursor-pointer items-center gap-3 border-b px-4 py-2.5 transition-colors last:border-0 hover:bg-muted/40"
       onClick={onClick}
     >
       <Tooltip>
@@ -41,7 +42,24 @@ export function TicketRow({ ticket, userRole, onClick }: TicketRowProps) {
         <TooltipContent>{t(`priority.${ticket.priority}`)} priority</TooltipContent>
       </Tooltip>
 
+      {ticket.number != null && (
+        <span className="hidden shrink-0 font-mono text-[11px] text-muted-foreground/60 sm:block">
+          #{ticket.number}
+        </span>
+      )}
+
       <p className="flex-1 truncate text-sm font-medium">{ticket.title}</p>
+
+      {ticket.labels && ticket.labels.length > 0 && (
+        <div className="hidden shrink-0 items-center gap-1 md:flex">
+          {ticket.labels.slice(0, 2).map((tl) => (
+            <LabelChip key={tl.label_id} label={tl.label} size="xs" />
+          ))}
+          {ticket.labels.length > 2 && (
+            <span className="text-[10px] text-muted-foreground">+{ticket.labels.length - 2}</span>
+          )}
+        </div>
+      )}
 
       <Badge className={`shrink-0 text-xs ${statusConfig[ticket.status].className}`}>
         {t(`status.${ticket.status}`)}
@@ -63,8 +81,8 @@ export function TicketRow({ ticket, userRole, onClick }: TicketRowProps) {
         <div className="size-6 shrink-0" />
       )}
 
-      <span className="w-24 shrink-0 text-right text-xs text-muted-foreground">
-        {formatDate(ticket.created_at)}
+      <span className="hidden w-16 shrink-0 text-right text-xs text-muted-foreground sm:block">
+        {timeAgo(ticket.updated_at)}
       </span>
 
       {canDelete && (

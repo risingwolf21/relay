@@ -7,6 +7,8 @@ import { DashboardPage } from '@/pages/dashboard-page'
 import { ProjectPage } from '@/pages/project-page'
 import { TicketPage } from '@/pages/ticket-page'
 import { SearchPage } from '@/pages/search-page'
+import { MyTicketsPage } from '@/pages/my-tickets-page'
+import { InboxPage } from '@/pages/inbox-page'
 import { NotFoundPage } from '@/pages/not-found-page'
 
 function AuthGuard({ children }: { children: React.ReactNode }) {
@@ -63,6 +65,14 @@ const router = createBrowserRouter([
       {
         path: 'searches/:searchId',
         element: <SearchPage />,
+      },
+      {
+        path: 'my-tickets',
+        element: <MyTicketsPage />,
+      },
+      {
+        path: 'inbox',
+        element: <InboxPage />,
       },
     ],
   },

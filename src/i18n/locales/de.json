@@ -42,7 +42,10 @@
     "menu": "Menü",
     "dashboard": "Dashboard",
     "openFullPage": "Vollansicht öffnen",
-    "fullPage": "Vollansicht"
+    "fullPage": "Vollansicht",
+    "myTickets": "Meine Tickets",
+    "inbox": "Posteingang",
+    "views": "Ansichten"
   },
   "projects": {
     "title": "Projekte",
@@ -88,6 +91,7 @@
     "status": "Status",
     "priority": "Priorität",
     "assignee": "Zugewiesen an",
+    "reporter": "Erstellt von",
     "unassigned": "Nicht zugewiesen",
     "saveChanges": "Änderungen speichern",
     "createTicket": "Ticket erstellen",
@@ -119,14 +123,21 @@
     "recurrence_daily": "Täglich",
     "recurrence_weekly": "Wöchentlich",
     "recurrence_biweekly": "Zweiwöchentlich",
-    "recurrence_monthly": "Monatlich"
+    "recurrence_monthly": "Monatlich",
+    "labels": "Labels",
+    "addLabel": "Label hinzufügen",
+    "noLabels": "Keine Labels",
+    "createLabel": "Label erstellen",
+    "labelName": "Label-Name",
+    "labelColor": "Farbe"
   },
   "status": {
     "backlog": "Rückstand",
     "todo": "Zu erledigen",
     "in_progress": "In Bearbeitung",
     "in_review": "In Überprüfung",
-    "done": "Erledigt"
+    "done": "Erledigt",
+    "canceled": "Abgebrochen"
   },
   "priority": {
     "urgent": "Dringend",
@@ -240,5 +251,30 @@
     "admin": "Admin",
     "editor": "Bearbeiter",
     "viewer": "Betrachter"
+  },
+  "myTickets": {
+    "title": "Meine Tickets",
+    "subtitle": "Alle dir zugewiesenen Tickets",
+    "empty": "Keine Tickets zugewiesen.",
+    "noOpenTickets": "Keine offenen Tickets. Schön.",
+    "showClosed": "Abgeschlossene anzeigen",
+    "hideClosed": "Abgeschlossene ausblenden"
+  },
+  "inbox": {
+    "title": "Posteingang",
+    "subtitle": "Aktuelle Aktivität in deinen Projekten",
+    "empty": "Nichts Neues im Posteingang.",
+    "allActivity": "Alle Aktivitäten"
+  },
+  "labels": {
+    "title": "Labels",
+    "new": "Neues Label",
+    "name": "Name",
+    "namePlaceholder": "z. B. Bug, Feature, Dokumentation",
+    "color": "Farbe",
+    "delete": "Label löschen",
+    "noLabels": "Noch keine Labels.",
+    "create": "Label erstellen",
+    "creating": "Wird erstellt…"
   }
 }

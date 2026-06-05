@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next'
 import { supabase } from '@/lib/supabase'
 import { useUpdateTicket, useDeleteTicket, useCreateTicket } from '@/hooks/use-tickets'
 import { TicketSubtasks } from '@/components/tickets/ticket-subtasks'
+import { LabelSelector } from '@/components/tickets/label-selector'
 import { useProjectMembers } from '@/hooks/use-members'
 import { useAuth } from '@/contexts/auth-context'
 import { TicketForm, type TicketFormValues } from '@/components/tickets/ticket-form'
@@ -81,9 +82,11 @@ interface PropertiesPanelProps {
   ticket: Ticket
   parentTicket: { id: string; title: string; project_id: string } | null | undefined
   t: (key: string, opts?: Record<string, unknown>) => string
+  canEdit: boolean
+  projectId: string
 }
 
-function PropertiesPanel({ ticket, parentTicket, t }: PropertiesPanelProps) {
+function PropertiesPanel({ ticket, parentTicket, t, canEdit, projectId }: PropertiesPanelProps) {
   const PriorityIcon = priorityConfig[ticket.priority].icon
 
   return (
@@ -151,6 +154,15 @@ function PropertiesPanel({ ticket, parentTicket, t }: PropertiesPanelProps) {
           </Link>
         </PropertyRow>
       )}
+
+      <PropertyRow label={t('tickets.labels')}>
+        <LabelSelector
+          ticketId={ticket.id}
+          projectId={projectId}
+          ticketLabels={ticket.labels ?? []}
+          canEdit={canEdit}
+        />
+      </PropertyRow>
 
       <Separator />
 
@@ -308,6 +320,9 @@ export function TicketPage() {
         <div className="flex-1 overflow-y-auto">
           <div className="mx-auto max-w-2xl px-4 py-6 md:px-6">
             {/* Title block */}
+            {ticket.number != null && (
+              <p className="mb-1 font-mono text-xs text-muted-foreground/60">#{ticket.number}</p>
+            )}
             <h1 className="font-heading text-xl font-semibold leading-snug md:text-2xl">
               {ticket.title}
             </h1>
@@ -318,7 +333,7 @@ export function TicketPage() {
             {/* Mobile properties strip */}
             {!editing && (
               <div className="mt-4 rounded-xl border bg-muted/30 p-4 md:hidden">
-                <PropertiesPanel ticket={ticket} parentTicket={parentTicket} t={t} />
+                <PropertiesPanel ticket={ticket} parentTicket={parentTicket} t={t} canEdit={canEdit} projectId={projectId!} />
               </div>
             )}
 
@@ -384,7 +399,7 @@ export function TicketPage() {
 
         {/* Right rail — desktop only */}
         <div className="hidden w-[260px] shrink-0 overflow-y-auto border-l p-5 md:block">
-          <PropertiesPanel ticket={ticket} parentTicket={parentTicket} t={t} />
+          <PropertiesPanel ticket={ticket} parentTicket={parentTicket} t={t} canEdit={canEdit} projectId={projectId!} />
         </div>
       </div>
     </div>
