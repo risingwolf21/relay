@@ -4,12 +4,11 @@ import { useTranslation } from 'react-i18next'
 import { useAuth } from '@/contexts/auth-context'
 import { useAllTickets } from '@/hooks/use-tickets'
 import { useProjects } from '@/hooks/use-projects'
-import { priorityConfig, statusConfig, OPEN_STATUSES, CLOSED_STATUSES, formatDate, getInitials } from '@/lib/ticket-utils'
+import { priorityConfig, statusConfig, OPEN_STATUSES, CLOSED_STATUSES, formatDate } from '@/lib/ticket-utils'
 import { Badge } from '@/components/ui/badge'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
-import type { Ticket, TicketStatus } from '@/types/database'
+import type { Ticket } from '@/types/database'
 
 function TicketLine({ ticket, projectName }: { ticket: Ticket; projectName: string }) {
   const { t } = useTranslation()
