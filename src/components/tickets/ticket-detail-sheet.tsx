@@ -108,7 +108,7 @@ export function TicketDetailSheet({
   }
 
   async function handleCreateNextRecurrence() {
-    if (!ticket.recurrence_frequency) return
+    if (!ticket || !ticket.recurrence_frequency) return
     const nextDue = calculateNextDueDate(ticket.due_date, ticket.recurrence_frequency)
     await createTicket.mutateAsync({
       project_id: ticket.project_id,
